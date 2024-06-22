@@ -1,4 +1,3 @@
-
 use godot::engine::utilities::randf_range;
 
 use godot::engine::ISprite2D;
@@ -7,7 +6,7 @@ use godot::engine::Texture2D;
 use godot::obj::WithBaseField;
 use godot::prelude::*;
 
-#[derive(Copy, Clone, PartialEq,Debug)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 pub enum Suit {
     Spades,
     Hearts,
@@ -26,7 +25,7 @@ pub struct PokerSprite {
     pub object_id: Option<InstanceId>,
 }
 
-#[derive(Copy, Clone,Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct Poker {
     pub suit: Suit,
     pub value: i32,
@@ -64,17 +63,16 @@ impl ISprite2D for PokerSprite {
 }
 #[godot_api]
 impl PokerSprite {
-    pub fn set_texture(&mut self){
-        let num = match self.poker.get_suit(){
+    pub fn set_texture(&mut self) {
+        let num = match self.poker.get_suit() {
             Suit::Spades => 0,
             Suit::Hearts => 13,
             Suit::Clubs => 26,
             Suit::Diamonds => 39,
             _ => 4,
-        }+self.poker.get_value();
-        let texture = load::<Texture2D>(format!("res://images/pokers/{}.jpg",num));
+        } + self.poker.get_value();
+        let texture = load::<Texture2D>(format!("res://images/pokers/{}.jpg", num));
         self.base_mut().set_texture(texture);
-
     }
     pub fn clicked(&mut self) {
         // godot_print!("PokerSprite clicked");
@@ -98,7 +96,6 @@ impl PokerSprite {
         //         }
         //     }
         // }
-
     }
     #[func]
     pub fn selected(&mut self) {
@@ -121,8 +118,6 @@ impl PokerSprite {
             ret
         }
     }
-
-    
 }
 
 impl Poker {
@@ -172,6 +167,4 @@ impl Poker {
     pub fn get_value(&self) -> i32 {
         self.value
     }
-
 }
-

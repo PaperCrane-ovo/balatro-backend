@@ -2,12 +2,12 @@ use core::gamecore::GameCore;
 
 use godot::{engine::Engine, prelude::*};
 
+mod blind;
+mod card;
 mod core;
 mod joker;
-mod poker;
 mod player;
-mod card;
-mod blind;
+mod poker;
 
 struct MyExtension;
 

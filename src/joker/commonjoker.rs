@@ -1,6 +1,9 @@
 use godot::obj::Gd;
 
-use crate::{card::card::ICard, poker::{category::Category, poker::PokerSprite}};
+use crate::{
+    card::card::ICard,
+    poker::{category::Category, poker::PokerSprite},
+};
 
 use super::joker::{IJoker, IJokerCard, JokerRarity};
 
@@ -36,7 +39,7 @@ impl IJoker for CommonJoker {
         &mut self,
         score: &mut Vec<i32>,
         _cards: &mut Vec<Gd<PokerSprite>>,
-        _category:Category,
+        _category: Category,
     ) {
         score[1] += self.magnification;
     }
