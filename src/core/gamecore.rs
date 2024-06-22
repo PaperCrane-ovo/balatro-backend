@@ -1,30 +1,29 @@
-use godot::{
-    engine::Time,
-    prelude::*,
-};
+use godot::{engine::Time, prelude::*};
 
 use crate::{
     blind::{blind::Blind, BlindState, BlindType},
     joker::{commonjoker::CommonJoker, joker::JokerSprite},
-    poker::{category::Category, poker::{Poker, PokerSprite}},
+    poker::{
+        category::Category,
+        poker::{Poker, PokerSprite},
+    },
 };
 
 use super::random::LinearCongruentialGenerator;
 
-#[derive(GodotConvert,Var,Export)]
+#[derive(GodotConvert, Var, Export)]
 #[godot(via = GString)]
-pub enum GameState{
+pub enum GameState {
     Win,
     Lose,
     StillPlaying,
     FinalWin,
 }
-impl Default for GameState{
-    fn default() -> Self{
+impl Default for GameState {
+    fn default() -> Self {
         GameState::StillPlaying
     }
 }
-
 
 #[derive(GodotClass)]
 #[class(init,base=Object)]
@@ -64,7 +63,6 @@ pub struct GameCore {
     #[var]
     pub hand_limit: i32,
 
-    
     pub blinds: Vec<Gd<Blind>>,
     #[var]
     pub cur_blind_index: i32,
@@ -74,11 +72,11 @@ pub struct GameCore {
 
     pub categories: Vec<Category>,
     #[var]
-    pub cur_score:i64,
+    pub cur_score: i64,
     #[var]
     pub this_round_score: Array<i64>,
     #[var]
-    pub game_state:GameState,
+    pub game_state: GameState,
 }
 
 #[godot_api]
@@ -108,15 +106,13 @@ impl GameCore {
     }
 
     #[func]
-    pub fn get_blinds(&self) -> Array<Gd<Blind>>{
+    pub fn get_blinds(&self) -> Array<Gd<Blind>> {
         let mut blinds = Array::new();
-        for i in self.blinds.iter(){
+        for i in self.blinds.iter() {
             blinds.push(i.clone());
         }
         blinds
     }
-
-
 
     #[func]
     #[deprecated(note = "use get_blinds instead")]
@@ -137,9 +133,9 @@ impl GameCore {
         state
     }
     #[func]
-    pub fn set_blinds(&mut self, state:Array<i32>){
-        for i in 0..3{
-            self.blinds[i].bind_mut().state = match state.get(i){
+    pub fn set_blinds(&mut self, state: Array<i32>) {
+        for i in 0..3 {
+            self.blinds[i].bind_mut().state = match state.get(i) {
                 0 => BlindState::NotChoose,
                 1 => BlindState::Choose,
                 2 => BlindState::Skip,
@@ -150,8 +146,8 @@ impl GameCore {
     }
 
     #[func]
-    pub fn get_specific_pile_count(&self,pile:StringName) -> i32{
-        match pile.to_string().as_str(){
+    pub fn get_specific_pile_count(&self, pile: StringName) -> i32 {
+        match pile.to_string().as_str() {
             "draw_pile" => self.draw_pile.len() as i32,
             "discard_pile" => self.discard_pile.len() as i32,
             "hand_pile" => self.hand_pile.len() as i32,
@@ -159,20 +155,18 @@ impl GameCore {
         }
     }
 
-
-
     #[func]
-    pub fn choose_current_blind(&mut self){
+    pub fn choose_current_blind(&mut self) {
         godot_print!("choose_current_blind");
         // 给joker钩子
-        for joker in self.joker_list.iter_mut(){
+        for joker in self.joker_list.iter_mut() {
             if let Some(joker_card) = joker.bind_mut().joker.as_mut() {
                 joker_card.on_enter_room();
             }
         }
         // 选择盲注后做初始化工作
         // 1. 重置玩家抽牌堆
-        for poker in self.poker_deck.iter(){
+        for poker in self.poker_deck.iter() {
             self.draw_pile.push(poker.clone());
         }
         // 2. 洗牌
@@ -183,7 +177,6 @@ impl GameCore {
         // 3. 重置得分
         self.cur_score = 0;
     }
-
 
     // #[func]
     // pub fn skip_current_blind(&mut self){
@@ -206,13 +199,12 @@ impl GameCore {
     //     }
     // }
 
-
     #[func]
-    pub fn on_play_card(&mut self){
+    pub fn on_play_card(&mut self) {
         let played_category = {
             let mut _category = Category::HighCard;
-            for category in self.categories.iter(){
-                if category.match_category(&self.selected_pokers){
+            for category in self.categories.iter() {
+                if category.match_category(&self.selected_pokers) {
                     _category = *category;
                     break;
                 }
@@ -220,25 +212,36 @@ impl GameCore {
             _category
         };
         // 打出某种牌型时，触发joker钩子
-        for joker in self.joker_list.iter_mut(){
+        for joker in self.joker_list.iter_mut() {
             if let Some(joker_card) = joker.bind_mut().joker.as_mut() {
-                joker_card.on_play_card(&self.selected_pokers,played_category);
+                joker_card.on_play_card(&self.selected_pokers, played_category);
             }
         }
         // 3. 处理算分
         let score = played_category.get_chip_mag();
-        let mut score = vec![score.0 as i32,score.1 as i32]; // 牌型带来的筹码和倍率
-        for i in self.selected_pokers.iter(){ // 扑克牌带来的筹码
+        let mut score = vec![score.0 as i32, score.1 as i32]; // 牌型带来的筹码和倍率
+        for i in self.selected_pokers.iter() {
+            // 扑克牌带来的筹码
             score[0] += i.bind().poker.get_chip();
         }
-        for i in self.joker_list.iter_mut(){ // 小丑牌带来的筹码和倍率加
+        for i in self.joker_list.iter_mut() {
+            // 小丑牌带来的筹码和倍率加
             if let Some(joker_card) = i.bind_mut().joker.as_mut() {
-                joker_card.cal_card_chip_mag(&mut score, &mut self.selected_pokers,played_category);
+                joker_card.cal_card_chip_mag(
+                    &mut score,
+                    &mut self.selected_pokers,
+                    played_category,
+                );
             }
         }
-        for i in self.joker_list.iter_mut(){ // 小丑牌带来的倍率乘
-            if let Some(joker_card) = i.bind_mut().joker.as_mut(){
-                joker_card.cal_final_chip_mag(&mut score, &mut self.selected_pokers, played_category);
+        for i in self.joker_list.iter_mut() {
+            // 小丑牌带来的倍率乘
+            if let Some(joker_card) = i.bind_mut().joker.as_mut() {
+                joker_card.cal_final_chip_mag(
+                    &mut score,
+                    &mut self.selected_pokers,
+                    played_category,
+                );
             }
         }
 
@@ -251,11 +254,11 @@ impl GameCore {
     }
 
     #[func]
-    pub fn on_discard_card(&mut self){
+    pub fn on_discard_card(&mut self) {
         let played_category = {
             let mut _category = Category::HighCard;
-            for category in self.categories.iter(){
-                if category.match_category(&self.selected_pokers){
+            for category in self.categories.iter() {
+                if category.match_category(&self.selected_pokers) {
                     _category = *category;
                     break;
                 }
@@ -263,59 +266,55 @@ impl GameCore {
             _category
         };
         // 弃掉某种牌型时触发joker钩子
-        for joker in self.joker_list.iter_mut(){
+        for joker in self.joker_list.iter_mut() {
             if let Some(joker_card) = joker.bind_mut().joker.as_mut() {
-                joker_card.on_discard_card(&self.selected_pokers,played_category);
+                joker_card.on_discard_card(&self.selected_pokers, played_category);
             }
         }
         // TODO: 弃牌触发蜡封
         self.discard_count -= 1;
-
     }
 
     #[func]
-    pub fn move_selected_pokers_to_discard_pile(&mut self){
-        for i in self.selected_pokers.iter(){
+    pub fn move_selected_pokers_to_discard_pile(&mut self) {
+        for i in self.selected_pokers.iter() {
             self.discard_pile.push(i.clone());
         }
         self.selected_pokers.clear();
         self.hand_pile.retain(|x| x.bind().is_selected == false);
-
     }
 
-
-
     #[func]
-    pub fn draw_pokers(&mut self,count: i32){
-        for _ in 0..count{
-            if let Some(poker) = self.draw_pile.pop(){
+    pub fn draw_pokers(&mut self, count: i32) {
+        for _ in 0..count {
+            if let Some(poker) = self.draw_pile.pop() {
                 self.hand_pile.push(poker);
             }
         }
     }
 
     #[func]
-    pub fn get_hand_pile(&self) -> Array<Gd<PokerSprite>>{
+    pub fn get_hand_pile(&self) -> Array<Gd<PokerSprite>> {
         let mut hand_pile = Array::new();
-        for i in self.hand_pile.iter(){
+        for i in self.hand_pile.iter() {
             hand_pile.push(i.clone());
         }
         hand_pile
     }
 
-    
-
     #[func]
-    pub fn get_category(&mut self) -> StringName{
+    pub fn get_category(&mut self) -> StringName {
         let mut category = Category::Null;
-        for i in 0..self.categories.len(){
-            if self.categories[i].match_category(&self.selected_pokers){
+        for i in 0..self.categories.len() {
+            if self.categories[i].match_category(&self.selected_pokers) {
                 category = self.categories[i];
                 break;
             }
         }
-        self.this_round_score.set(0,category.get_chip_mag().0 as i64);
-        self.this_round_score.set(1,category.get_chip_mag().1 as i64);
+        self.this_round_score
+            .set(0, category.get_chip_mag().0 as i64);
+        self.this_round_score
+            .set(1, category.get_chip_mag().1 as i64);
         match category {
             // Category::HighCard => "HighCard".into(),
             // Category::OnePair => "OnePair".into(),
@@ -339,32 +338,28 @@ impl GameCore {
             Category::StraightFlush => "同花顺".into(),
             Category::RoyalFlush => "皇家同花顺".into(),
         }
-
     }
 
     #[func]
-    pub fn has_selected_pokers(&self) -> bool{
+    pub fn has_selected_pokers(&self) -> bool {
         !self.selected_pokers.is_empty()
     }
 
     #[func]
-    pub fn add_to_selected_cards(&mut self,poker:Gd<PokerSprite>) -> bool{
+    pub fn add_to_selected_cards(&mut self, poker: Gd<PokerSprite>) -> bool {
         let size = self.selected_pokers.len();
-        if size >=5{
+        if size >= 5 {
             return false;
         }
         self.selected_pokers.push(poker);
         return true;
     }
     #[func]
-    pub fn remove_from_selected_cards(&mut self,poker:Gd<PokerSprite>){
+    pub fn remove_from_selected_cards(&mut self, poker: Gd<PokerSprite>) {
         self.selected_pokers.retain(|x| x != &poker);
     }
-    
 
-
-
-    pub fn initialize_blind(&mut self){
+    pub fn initialize_blind(&mut self) {
         // TODO: BossBlind
         self.blinds.clear();
         let mut small_blind = Blind::new(BlindType::SmallBlind);
@@ -382,7 +377,6 @@ impl GameCore {
         self.blinds.push(Gd::from_object(boss_blind));
 
         self.cur_blind_index = 0;
-
     }
 
     pub fn initialize_player_message(&mut self) {
@@ -405,7 +399,7 @@ impl GameCore {
         self.shuffle_rng.bind_mut().set_seed(seed);
     }
 
-    pub fn initialize_categories(&mut self){
+    pub fn initialize_categories(&mut self) {
         self.categories.push(Category::HighCard);
         self.categories.push(Category::OnePair);
         self.categories.push(Category::TwoPair);
@@ -453,18 +447,16 @@ impl GameCore {
             for j in 1..14 {
                 let mut poker = Poker::new();
                 poker.initialize(i, j);
-                let mut poker_sprite = Gd::from_init_fn(|base| {
-                    PokerSprite{
-                        base,
-                        poker,
-                        is_selected: false,
-                        object_id: None,
-                    }
+                let mut poker_sprite = Gd::from_init_fn(|base| PokerSprite {
+                    base,
+                    poker,
+                    is_selected: false,
+                    object_id: None,
                 });
                 let id = poker_sprite.instance_id();
                 poker_sprite.bind_mut().set_object_id(id);
                 poker_sprite.bind_mut().set_texture();
-                
+
                 self.poker_pool.push(poker_sprite);
             }
         }
@@ -473,20 +465,21 @@ impl GameCore {
     pub fn generate_joker_pool(&mut self) {
         // TODO
         self.joker_pool.clear();
-        self.joker_pool.push(Gd::from_init_fn(|base| {JokerSprite{base, joker: Some(Box::new(CommonJoker::new()))}}));
-
-
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(CommonJoker::new())),
+        }));
     }
 
-    pub fn initialize_poker_deck(&mut self){
-        for i in self.poker_pool.iter(){
+    pub fn initialize_poker_deck(&mut self) {
+        for i in self.poker_pool.iter() {
             self.poker_deck.push(i.clone());
         }
     }
 
-    fn shuffle<T>(list: &mut Vec<T>,rng:&mut GdMut<LinearCongruentialGenerator>) {
+    fn shuffle<T>(list: &mut Vec<T>, rng: &mut GdMut<LinearCongruentialGenerator>) {
         let mut n = list.len();
-        godot_print!("shuffle list len:{}",n);
+        godot_print!("shuffle list len:{}", n);
         while n > 1 {
             let k = rng.gen() as usize % n;
             n -= 1;

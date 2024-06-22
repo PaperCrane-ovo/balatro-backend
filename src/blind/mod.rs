@@ -1,32 +1,33 @@
-use godot::{builtin::GString, register::{Export, GodotConvert, Var}};
+use godot::{
+    builtin::GString,
+    register::{Export, GodotConvert, Var},
+};
 pub mod blind;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[derive(GodotConvert,Var,Export)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, GodotConvert, Var, Export)]
 #[godot(via = GString)]
-pub enum BlindType{
+pub enum BlindType {
     SmallBlind,
     BigBlind,
     BossBlind,
 }
 
-impl Default for BlindType{
-    fn default() -> Self{
+impl Default for BlindType {
+    fn default() -> Self {
         BlindType::SmallBlind
     }
 }
-#[derive(Debug)]
-#[derive(GodotConvert,Var,Export)]
+#[derive(Debug, GodotConvert, Var, Export)]
 #[godot(via = GString)]
-pub enum BlindState{
+pub enum BlindState {
     NotChoose,
     Choose,
     Skip,
     Killed,
 }
 
-impl Default for BlindState{
-    fn default() -> Self{
+impl Default for BlindState {
+    fn default() -> Self {
         BlindState::NotChoose
     }
 }

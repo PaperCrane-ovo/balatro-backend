@@ -1,10 +1,13 @@
-use godot::{engine::{Engine, Label}, prelude::*};
+use godot::{
+    engine::{Engine, Label},
+    prelude::*,
+};
 
 use crate::{core::gamecore::GameCore, joker::joker::IJokerCard};
 
 #[derive(GodotClass)]
 #[class(init,base=Node2D)]
-pub struct Player{
+pub struct Player {
     base: Base<Node2D>,
 }
 
@@ -16,13 +19,24 @@ pub struct Player{
 
 //         }
 //     }
-    
+
 // }
 
 #[godot_api]
-impl Player{
-    pub fn initialize_message(&mut self, _gold:i32, _round:i32, _play_hand_count:i32, _discard_count:i32, _cur_ante:i32, _max_ante:i32){
-        let mut binding = Engine::singleton().get_singleton("GameCore".into()).unwrap().cast::<GameCore>();
+impl Player {
+    pub fn initialize_message(
+        &mut self,
+        _gold: i32,
+        _round: i32,
+        _play_hand_count: i32,
+        _discard_count: i32,
+        _cur_ante: i32,
+        _max_ante: i32,
+    ) {
+        let mut binding = Engine::singleton()
+            .get_singleton("GameCore".into())
+            .unwrap()
+            .cast::<GameCore>();
         let mut gamecore = binding.bind_mut();
         gamecore.gold = _gold;
         gamecore.round = _round;
@@ -30,13 +44,14 @@ impl Player{
         gamecore.discard_count = _discard_count;
         gamecore.cur_ante = _cur_ante;
         gamecore.max_ante = _max_ante;
-        
     }
 
-    
     #[func]
-    pub fn get_message(&mut self) -> Dictionary{
-        let binding = Engine::singleton().get_singleton("GameCore".into()).unwrap().cast::<GameCore>();
+    pub fn get_message(&mut self) -> Dictionary {
+        let binding = Engine::singleton()
+            .get_singleton("GameCore".into())
+            .unwrap()
+            .cast::<GameCore>();
         let gamecore = binding.bind();
         let mut dict = Dictionary::new();
         dict.insert("gold", gamecore.gold);
@@ -47,7 +62,4 @@ impl Player{
         dict.insert("max_ante", gamecore.max_ante);
         dict
     }
-
-
-
 }

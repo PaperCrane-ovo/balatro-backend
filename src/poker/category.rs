@@ -196,7 +196,7 @@ use super::poker::PokerSprite;
 // }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Category{
+pub enum Category {
     Null,
     HighCard,
     OnePair,
@@ -210,9 +210,9 @@ pub enum Category{
     RoyalFlush,
 }
 
-impl Category{
-    pub fn get_priority(&self) -> i32{
-        match self{
+impl Category {
+    pub fn get_priority(&self) -> i32 {
+        match self {
             Category::Null => 11,
             Category::HighCard => 1,
             Category::OnePair => 2,
@@ -226,21 +226,17 @@ impl Category{
             Category::RoyalFlush => 10,
         }
     }
-    pub fn match_category(&self,cards:&Vec<Gd<PokerSprite>>) -> bool{
-        match self{
-            Category::Null => {
-                cards.len() == 0
-            }
-            Category::HighCard => {
-                true
-            }
+    pub fn match_category(&self, cards: &Vec<Gd<PokerSprite>>) -> bool {
+        match self {
+            Category::Null => cards.len() == 0,
+            Category::HighCard => true,
             Category::OnePair => {
                 let mut values = [0; 14];
-                for card in cards.iter(){
+                for card in cards.iter() {
                     values[card.bind().poker.get_value() as usize] += 1;
                 }
-                for i in 1..values.len(){
-                    if values[i] == 2{
+                for i in 1..values.len() {
+                    if values[i] == 2 {
                         return true;
                     }
                 }
@@ -248,12 +244,12 @@ impl Category{
             }
             Category::TwoPair => {
                 let mut values = [0; 14];
-                for card in cards.iter(){
+                for card in cards.iter() {
                     values[card.bind().poker.get_value() as usize] += 1;
                 }
                 let mut count = 0;
-                for i in 1..values.len(){
-                    if values[i] >= 2{
+                for i in 1..values.len() {
+                    if values[i] >= 2 {
                         count += 1;
                     }
                 }
@@ -261,11 +257,11 @@ impl Category{
             }
             Category::ThreeOfAKind => {
                 let mut values = [0; 14];
-                for card in cards.iter(){
+                for card in cards.iter() {
                     values[card.bind().poker.get_value() as usize] += 1;
                 }
-                for i in 1..values.len(){
-                    if values[i] == 3{
+                for i in 1..values.len() {
+                    if values[i] == 3 {
                         return true;
                     }
                 }
@@ -273,20 +269,25 @@ impl Category{
             }
             Category::Straight => {
                 let mut values = vec![];
-                for card in cards.iter(){
+                for card in cards.iter() {
                     values.push(card.bind().poker.get_value());
                 }
-                if values.len() != 5{
+                if values.len() != 5 {
                     return false;
                 }
                 values.sort();
                 // 处理特殊情况
-                if values[0] == 1 && values[1] == 10 && values[2] == 11 && values[3] == 12 && values[4] == 13{
+                if values[0] == 1
+                    && values[1] == 10
+                    && values[2] == 11
+                    && values[3] == 12
+                    && values[4] == 13
+                {
                     return true;
                 }
                 let mut past = values[0];
-                for i in 1..values.len(){
-                    if past + 1 != values[i]{
+                for i in 1..values.len() {
+                    if past + 1 != values[i] {
                         return false;
                     }
                     past = values[i];
@@ -295,12 +296,12 @@ impl Category{
             }
             Category::Flush => {
                 // TODO: 4张牌
-                if cards.len() != 5{
+                if cards.len() != 5 {
                     return false;
                 }
                 let suit = cards[0].bind().poker.get_suit();
-                for card in cards.iter(){
-                    if card.bind().poker.get_suit() != suit{
+                for card in cards.iter() {
+                    if card.bind().poker.get_suit() != suit {
                         return false;
                     }
                 }
@@ -308,27 +309,28 @@ impl Category{
             }
             Category::FullHouse => {
                 let mut values = [0; 14];
-                for card in cards.iter(){
+                for card in cards.iter() {
                     values[card.bind().poker.get_value() as usize] += 1;
                 }
-                let mut three = false;let mut two = false;
-                for i in 1..values.len(){
-                    if values[i] == 3{
+                let mut three = false;
+                let mut two = false;
+                for i in 1..values.len() {
+                    if values[i] == 3 {
                         three = true;
                     }
-                    if values[i] == 2{
+                    if values[i] == 2 {
                         two = true;
-                    }   
+                    }
                 }
                 three && two
             }
             Category::FourOfAKind => {
                 let mut values = [0; 14];
-                for card in cards.iter(){
+                for card in cards.iter() {
                     values[card.bind().poker.get_value() as usize] += 1;
                 }
-                for i in 1..values.len(){
-                    if values[i] == 4{
+                for i in 1..values.len() {
+                    if values[i] == 4 {
                         return true;
                     }
                 }
@@ -339,35 +341,38 @@ impl Category{
             }
             Category::RoyalFlush => {
                 let mut values = vec![];
-                for card in cards.iter(){
+                for card in cards.iter() {
                     values.push(card.bind().poker.get_value());
                 }
-                if values.len() != 5{
+                if values.len() != 5 {
                     return false;
                 }
                 values.sort();
-                if values[0] == 1 && values[1] == 10 && values[2] == 11 && values[3] == 12 && values[4] == 13{
+                if values[0] == 1
+                    && values[1] == 10
+                    && values[2] == 11
+                    && values[3] == 12
+                    && values[4] == 13
+                {
                     return Category::Flush.match_category(cards);
                 }
                 false
             }
-
         }
     }
-    pub fn get_chip_mag(&self) -> (i32,i32) {
-        match self{
-            Category::Null => (0,0),
-            Category::HighCard => (5,1),
-            Category::OnePair => (10,2),
-            Category::TwoPair => (20,2),
-            Category::ThreeOfAKind => (30,3),
-            Category::Straight => (30,4),
-            Category::Flush => (35,4),
-            Category::FullHouse => (40,4),
-            Category::FourOfAKind => (60,7),
-            Category::StraightFlush => (100,8),
-            Category::RoyalFlush => (100,8),
+    pub fn get_chip_mag(&self) -> (i32, i32) {
+        match self {
+            Category::Null => (0, 0),
+            Category::HighCard => (5, 1),
+            Category::OnePair => (10, 2),
+            Category::TwoPair => (20, 2),
+            Category::ThreeOfAKind => (30, 3),
+            Category::Straight => (30, 4),
+            Category::Flush => (35, 4),
+            Category::FullHouse => (40, 4),
+            Category::FourOfAKind => (60, 7),
+            Category::StraightFlush => (100, 8),
+            Category::RoyalFlush => (100, 8),
         }
     }
 }
-
