@@ -168,24 +168,6 @@ impl GameCore {
 
     }
 
-    #[func]
-    pub fn win_current_blind(&mut self){
-        if self.cur_blind_index == 2{
-            if self.cur_ante < self.max_ante{
-                self.cur_ante += 1;
-                self.initialize_blind();
-            }else{
-                self.game_state = GameState::FinalWin;
-            }
-        }else{
-            self.blinds[self.cur_blind_index as usize].bind_mut().state = BlindState::Killed;
-            self.cur_blind_index += 1;
-            self.blinds[self.cur_blind_index as usize].bind_mut().state = BlindState::Choose;
-        }
-        self.reset_player_message();
-        self.poker_deck.iter_mut().for_each(|x| x.bind_mut().is_selected = false);
-
-    }
 
     #[func]
     pub fn get_specific_pile_count(&self, pile: StringName) -> i32 {
