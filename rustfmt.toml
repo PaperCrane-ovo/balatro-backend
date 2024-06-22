@@ -1,1 +1,3 @@
-# 使用默认设置
+# 其他使用默认设置
+# item之间的最小行数
+# blank_lines_lower_bound = 1

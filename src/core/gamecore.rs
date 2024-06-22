@@ -2,7 +2,7 @@ use godot::{engine::Time, prelude::*};
 
 use crate::{
     blind::{blind::Blind, BlindState, BlindType},
-    joker::{commonjoker::CommonJoker, joker::JokerSprite},
+    joker::{commonjoker::CommonJoker, joker::JokerSprite, sparetrousers::SpareTrousers},
     poker::{
         category::Category,
         poker::{Poker, PokerSprite},
@@ -238,21 +238,20 @@ impl GameCore {
             }
             _category
         };
-        // 打出某种牌型时，触发joker钩子
+        // 打出某种牌型时, 触发joker钩子
         for joker in self.joker_list.iter_mut() {
             if let Some(joker_card) = joker.bind_mut().joker.as_mut() {
                 joker_card.on_play_card(&self.selected_pokers, played_category);
             }
         }
         // 3. 处理算分
-        let score = played_category.get_chip_mag();
-        let mut score = vec![score.0 as i32, score.1 as i32]; // 牌型带来的筹码和倍率
+        let mut score = played_category.get_chip_mag();
         for i in self.selected_pokers.iter() {
             // 扑克牌带来的筹码
-            score[0] += i.bind().poker.get_chip();
+            score.chips += i.bind().poker.get_chip();
         }
         for i in self.joker_list.iter_mut() {
-            // 小丑牌带来的筹码和倍率加
+            // 牌对小丑牌的作用
             if let Some(joker_card) = i.bind_mut().joker.as_mut() {
                 joker_card.cal_card_chip_mag(
                     &mut score,
@@ -262,7 +261,7 @@ impl GameCore {
             }
         }
         for i in self.joker_list.iter_mut() {
-            // 小丑牌带来的倍率乘
+            // 小丑牌对打出牌组的作用
             if let Some(joker_card) = i.bind_mut().joker.as_mut() {
                 joker_card.cal_final_chip_mag(
                     &mut score,
@@ -272,10 +271,10 @@ impl GameCore {
             }
         }
 
-        self.this_round_score.set(0, score[0] as i64);
-        self.this_round_score.set(1, score[1] as i64);
+        self.this_round_score.set(0, score.chips);
+        self.this_round_score.set(1, score.mult);
 
-        self.cur_score += score[0] as i64 * score[1] as i64;
+        self.cur_score += score.get_score();
 
         self.play_hand_count -= 1;
     }
@@ -299,6 +298,7 @@ impl GameCore {
             }
         }
         // TODO: 弃牌触发蜡封
+        // TODO: NO TODO
         self.discard_count -= 1;
     }
 
@@ -329,6 +329,7 @@ impl GameCore {
         hand_pile
     }
 
+    /// 获取牌型名称
     #[func]
     pub fn get_category(&mut self) -> StringName {
         let mut category = Category::Null;
@@ -338,10 +339,9 @@ impl GameCore {
                 break;
             }
         }
-        self.this_round_score
-            .set(0, category.get_chip_mag().0 as i64);
-        self.this_round_score
-            .set(1, category.get_chip_mag().1 as i64);
+        let score = category.get_chip_mag();
+        self.this_round_score.set(0, score.chips);
+        self.this_round_score.set(1, score.mult);
         match category {
             // Category::HighCard => "HighCard".into(),
             // Category::OnePair => "OnePair".into(),
@@ -507,6 +507,10 @@ impl GameCore {
         self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
             base,
             joker: Some(Box::new(CommonJoker::new())),
+        }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(SpareTrousers::new())),
         }));
     }
 

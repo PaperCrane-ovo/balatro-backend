@@ -6,6 +6,7 @@ use godot::engine::Texture2D;
 use godot::obj::WithBaseField;
 use godot::prelude::*;
 
+/// 花色
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum Suit {
     Spades,
@@ -25,12 +26,16 @@ pub struct PokerSprite {
     pub object_id: Option<InstanceId>,
 }
 
+/// 扑克牌
 #[derive(Copy, Clone, Debug)]
 pub struct Poker {
+    /// 花色
     pub suit: Suit,
-    pub value: i32,
-    pub base_chip: i32,
-    pub extra_chip: i32,
+    pub value: i64,
+    /// 基础筹码
+    pub base_chip: i64,
+    /// 额外筹码
+    pub extra_chip: i64,
     pub is_valid: bool,
 }
 
@@ -110,7 +115,7 @@ impl PokerSprite {
         self.object_id = Some(object_id);
     }
     #[func]
-    pub fn get_value_to_sort(&self) -> i32 {
+    pub fn get_value_to_sort(&self) -> i64 {
         let ret = self.poker.get_value();
         if ret == 1 {
             14
@@ -121,7 +126,7 @@ impl PokerSprite {
 }
 
 impl Poker {
-    pub fn initialize(&mut self, suit: i32, value: i32) {
+    pub fn initialize(&mut self, suit: i32, value: i64) {
         self.suit = match suit {
             0 => Suit::Spades,
             1 => Suit::Hearts,
@@ -145,14 +150,14 @@ impl Poker {
         self.extra_chip = 0;
         self.is_valid = true;
     }
-    pub fn get_chip(&self) -> i32 {
+    pub fn get_chip(&self) -> i64 {
         if self.get_valid() {
             self.base_chip + self.extra_chip
         } else {
             0
         }
     }
-    pub fn set_extra_chip(&mut self, chip: i32) {
+    pub fn set_extra_chip(&mut self, chip: i64) {
         self.extra_chip = chip;
     }
     pub fn set_valid(&mut self, is_valid: bool) {
@@ -164,7 +169,7 @@ impl Poker {
     pub fn get_suit(&self) -> Suit {
         self.suit
     }
-    pub fn get_value(&self) -> i32 {
+    pub fn get_value(&self) -> i64 {
         self.value
     }
 }

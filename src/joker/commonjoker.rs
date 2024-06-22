@@ -2,18 +2,22 @@ use godot::obj::Gd;
 
 use crate::{
     card::card::ICard,
-    poker::{category::Category, poker::PokerSprite},
+    poker::{
+        category::{Category, ScoringInfo},
+        poker::PokerSprite,
+    },
 };
 
 use super::joker::{IJoker, IJokerCard, JokerRarity};
 
-#[derive(Clone)]
+/// 小丑
+#[derive(Default, Clone)]
 pub struct CommonJoker {
     pub name: String,
     pub rarity: JokerRarity,
     pub description: String,
     pub price: i32,
-    pub magnification: i32,
+    pub magnification: i64,
     pub sprite_path: String,
 }
 
@@ -35,13 +39,14 @@ impl IJoker for CommonJoker {
         self.magnification = 4;
         self.sprite_path = "res://joker/common_joker.png".to_string();
     }
+
     fn cal_final_chip_mag(
         &mut self,
-        score: &mut Vec<i32>,
+        score: &mut ScoringInfo,
         _cards: &mut Vec<Gd<PokerSprite>>,
         _category: Category,
     ) {
-        score[1] += self.magnification;
+        score.mult += self.magnification;
     }
 }
 
@@ -49,14 +54,7 @@ impl IJokerCard for CommonJoker {}
 
 impl CommonJoker {
     pub fn new() -> Self {
-        let mut joker = CommonJoker {
-            name: "".to_string(),
-            rarity: JokerRarity::Common,
-            description: "".to_string(),
-            price: 0,
-            magnification: 0,
-            sprite_path: "".to_string(),
-        };
+        let mut joker = CommonJoker::default();
         joker.initialize();
         joker
     }
