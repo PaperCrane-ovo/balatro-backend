@@ -59,6 +59,10 @@ pub struct GameCore {
     #[export]
     pub play_hand_count: i32,
     #[export]
+    pub max_play_hand_count: i32,
+    #[export]
+    pub max_discard_count: i32,
+    #[export]
     pub discard_count: i32,
 
     #[var]
@@ -150,6 +154,25 @@ impl GameCore {
     }
 
     #[func]
+    pub fn win_current_blind(&mut self){
+        if self.cur_blind_index == 2{
+            if self.cur_ante < self.max_ante{
+                self.cur_ante += 1;
+                self.initialize_blind();
+            }else{
+                self.game_state = GameState::FinalWin;
+            }
+        }else{
+            self.blinds[self.cur_blind_index as usize].bind_mut().state = BlindState::Killed;
+            self.cur_blind_index += 1;
+            self.blinds[self.cur_blind_index as usize].bind_mut().state = BlindState::Choose;
+        }
+        self.reset_player_message();
+        self.poker_deck.iter_mut().for_each(|x| x.bind_mut().is_selected = false);
+
+    }
+
+    #[func]
     pub fn get_specific_pile_count(&self,pile:StringName) -> i32{
         match pile.to_string().as_str(){
             "draw_pile" => self.draw_pile.len() as i32,
@@ -172,6 +195,9 @@ impl GameCore {
         }
         // 选择盲注后做初始化工作
         // 1. 重置玩家抽牌堆
+        self.hand_pile.clear();
+        self.discard_pile.clear();
+        self.draw_pile.clear();
         for poker in self.poker_deck.iter(){
             self.draw_pile.push(poker.clone());
         }
@@ -393,8 +419,20 @@ impl GameCore {
         self.play_hand_count = 4;
         self.discard_count = 3;
         self.hand_limit = 12;
+        self.max_play_hand_count = 4;
+        self.max_discard_count = 3;
 
         self.cur_score = 0;
+    }
+
+    pub fn reset_player_message(&mut self) {
+        godot_print!("reset_player_message");
+        self.play_hand_count = self.max_play_hand_count;
+        self.discard_count = self.max_discard_count;
+        self.round += 1;
+        self.cur_score = 0;
+        self.this_round_score.set(0, 0);
+        self.this_round_score.set(1, 0);
     }
 
     pub fn init_rng(&mut self, seed: i64) {
