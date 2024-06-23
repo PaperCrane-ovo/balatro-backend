@@ -167,6 +167,7 @@ impl GameCore {
 
     #[func]
     pub fn win_current_blind(&mut self) {
+        self.gold += self.blinds[self.cur_blind_index as usize].bind().award;
         if self.cur_blind_index == 2 {
             if self.cur_ante < self.max_ante {
                 self.cur_ante += 1;
@@ -636,10 +637,7 @@ impl GameCore {
         self.joker_list.retain(|x| x != &joker);
         // joker unequip
         joker.clone().bind_mut().joker.as_mut().unwrap().on_sold();
-        let mut gamecore = godot::engine::Engine::singleton()
-            .get_singleton("GameCore".into())
-            .unwrap()
-            .cast::<GameCore>();
-        gamecore.bind_mut().gold += joker.clone().bind().joker.as_ref().unwrap().get_price();
+        
+        self.gold += joker.clone().bind().joker.as_ref().unwrap().get_price();
     }
 }
