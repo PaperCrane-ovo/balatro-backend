@@ -77,7 +77,7 @@ impl Hiker {
     const POKER_CHIPS_ADD: i64 = 5;
 
     // TODO
-    const SPRITE_PATH: &'static str = "res://images/jokers/common_joker.jpg";
+    const SPRITE_PATH: &'static str = "res://images/jokers/hiker.png";
 
     pub fn new() -> Self {
         let mut joker = Hiker::default();

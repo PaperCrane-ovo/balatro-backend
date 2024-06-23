@@ -75,7 +75,7 @@ impl CommonJoker {
 
     const BASE_MULT: i64 = 4;
 
-    const SPRITE_PATH: &'static str = "res://images/jokers/common_joker.jpg";
+    const SPRITE_PATH: &'static str = "res://images/jokers/common_joker.png";
 
     pub fn new() -> Self {
         let mut joker = CommonJoker::default();

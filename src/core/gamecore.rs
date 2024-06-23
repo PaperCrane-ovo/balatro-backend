@@ -607,4 +607,15 @@ impl GameCore {
         }
         joker_list
     }
+    #[func]
+    pub fn pop_joker(&mut self, joker: Gd<JokerSprite>) {
+        self.joker_list.retain(|x| x != &joker);
+        // joker unequip
+        joker.clone().bind_mut().joker.as_mut().unwrap().on_sold();
+        let mut gamecore = godot::engine::Engine::singleton()
+            .get_singleton("GameCore".into())
+            .unwrap()
+            .cast::<GameCore>();
+        gamecore.bind_mut().gold += joker.clone().bind().joker.as_ref().unwrap().get_price();
+    }
 }

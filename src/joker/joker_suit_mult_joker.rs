@@ -80,8 +80,7 @@ impl DiamondsMultJoker {
 
     const MULT_ADD: f64 = 3_f64;
 
-    // TODO
-    const SPRITE_PATH: &'static str = "res://images/jokers/common_joker.jpg";
+    const SPRITE_PATH: &'static str = "res://images/jokers/greedy_joker.png";
 
     pub fn new() -> Self {
         let mut joker = DiamondsMultJoker::default();
@@ -160,7 +159,7 @@ impl HeartsMultJoker {
     const MULT_ADD: f64 = 3_f64;
 
     // TODO
-    const SPRITE_PATH: &'static str = "res://images/jokers/common_joker.jpg";
+    const SPRITE_PATH: &'static str = "res://images/jokers/lusty_joker.png";
 
     pub fn new() -> Self {
         let mut joker = HeartsMultJoker::default();
@@ -239,7 +238,7 @@ impl SpadesMultJoker {
     const MULT_ADD: f64 = 3_f64;
 
     // TODO
-    const SPRITE_PATH: &'static str = "res://images/jokers/common_joker.jpg";
+    const SPRITE_PATH: &'static str = "res://images/jokers/wrathful_joker.png";
 
     pub fn new() -> Self {
         let mut joker = SpadesMultJoker::default();
@@ -318,7 +317,7 @@ impl ClubsMultJoker {
     const MULT_ADD: f64 = 3_f64;
 
     // TODO
-    const SPRITE_PATH: &'static str = "res://images/jokers/common_joker.jpg";
+    const SPRITE_PATH: &'static str = "res://images/jokers/gluttonous_joker.png";
 
     pub fn new() -> Self {
         let mut joker = ClubsMultJoker::default();

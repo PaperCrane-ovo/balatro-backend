@@ -92,7 +92,7 @@ impl SpareTrousers {
     const MULT_ADD: i64 = 2;
 
     // TODO
-    const SPRITE_PATH: &'static str = "res://images/jokers/spare_trousers.jpg";
+    const SPRITE_PATH: &'static str = "res://images/jokers/spare_trousers.png";
 
     pub fn new() -> Self {
         let mut joker = SpareTrousers::default();
