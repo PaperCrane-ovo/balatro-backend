@@ -31,7 +31,7 @@ impl IJoker for DiamondsMultJoker {
         self.price = 4;
     }
 
-    fn on_card_played(
+    fn on_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
         hands: &mut Vec<Gd<PokerSprite>>,
@@ -110,7 +110,7 @@ impl IJoker for HeartsMultJoker {
         self.price = 4;
     }
 
-    fn on_card_played(
+    fn on_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
         hands: &mut Vec<Gd<PokerSprite>>,
@@ -189,7 +189,7 @@ impl IJoker for SpadesMultJoker {
         self.price = 4;
     }
 
-    fn on_card_played(
+    fn on_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
         hands: &mut Vec<Gd<PokerSprite>>,
@@ -268,7 +268,7 @@ impl IJoker for ClubsMultJoker {
         self.price = 4;
     }
 
-    fn on_card_played(
+    fn on_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
         hands: &mut Vec<Gd<PokerSprite>>,

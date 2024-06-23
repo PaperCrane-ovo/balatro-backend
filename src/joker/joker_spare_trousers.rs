@@ -34,7 +34,7 @@ impl IJoker for SpareTrousers {
         self.description = Self::DESCRIPTION_FORMAT.replace("{}", self.mult.to_string().as_str());
     }
 
-    fn on_play_hand(&mut self, _cards: &Vec<Gd<PokerSprite>>, pokerhand: Category) {
+    fn on_play_hand(&mut self, _: &Vec<Gd<PokerSprite>>, pokerhand: Category) {
         match pokerhand {
             Category::FullHouse | Category::TwoPair => {
                 self.mult += Self::MULT_ADD;
@@ -45,7 +45,7 @@ impl IJoker for SpareTrousers {
         };
     }
 
-    fn post_card_played(
+    fn post_calculate_poker_score(
         &mut self,
         score: &mut ScoringInfo,
         _cards: &mut Vec<Gd<PokerSprite>>,
@@ -85,7 +85,7 @@ impl SpareTrousers {
     const RARITY: JokerRarity = JokerRarity::Uncommon;
 
     const DESCRIPTION_FORMAT: &'static str =
-        "如果打出的牌中包含\n两对\n则这张小丑牌获得+2倍率\n当前为{}";
+        "如果打出的牌中包含\n两对\n则这张小丑牌获得+2倍率\n（当前为+{}倍率）";
 
     const BASE_MULT: i64 = 0;
 

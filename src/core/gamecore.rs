@@ -7,8 +7,10 @@ use crate::{
     joker::{
         joker::JokerSprite,
         joker_common_joker::CommonJoker,
+        joker_even_odd_bros::{EvenSteven, OddTodd},
         joker_hiker::Hiker,
         joker_spare_trousers::SpareTrousers,
+        joker_square_joker::SquareJoker,
         joker_suit_mult_joker::{
             ClubsMultJoker, DiamondsMultJoker, HeartsMultJoker, SpadesMultJoker,
         },
@@ -269,14 +271,22 @@ impl GameCore {
         for i in self.joker_list.iter_mut() {
             // 牌对小丑牌的作用
             if let Some(joker_card) = i.bind_mut().joker.as_mut() {
-                joker_card.on_card_played(&mut score, &mut self.selected_pokers, played_category);
+                joker_card.on_calculate_poker_score(
+                    &mut score,
+                    &mut self.selected_pokers,
+                    played_category,
+                );
             }
         }
 
         for i in self.joker_list.iter_mut() {
             // 小丑牌对打出牌组的作用
             if let Some(joker_card) = i.bind_mut().joker.as_mut() {
-                joker_card.post_card_played(&mut score, &mut self.selected_pokers, played_category);
+                joker_card.post_calculate_poker_score(
+                    &mut score,
+                    &mut self.selected_pokers,
+                    played_category,
+                );
             }
         }
 
@@ -542,6 +552,18 @@ impl GameCore {
             base,
             joker: Some(Box::new(Hiker::new())),
         }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(SquareJoker::new())),
+        }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(OddTodd::new())),
+        }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(EvenSteven::new())),
+        }));
 
         self.joker_pool
             .iter_mut()
@@ -591,6 +613,8 @@ impl GameCore {
         joker.bind_mut().set_texture();
         joker
     }
+
+    /// 获得小丑
     #[func]
     pub fn push_joker(&mut self, joker: Gd<JokerSprite>) {
         if self.joker_list.len() >= self.joker_list_limit as usize {
@@ -599,6 +623,7 @@ impl GameCore {
         joker.clone().bind_mut().joker.as_mut().unwrap().on_equip();
         self.joker_list.push(joker);
     }
+
     #[func]
     pub fn get_joker_list(&self) -> Array<Gd<JokerSprite>> {
         let mut joker_list = Array::new();
