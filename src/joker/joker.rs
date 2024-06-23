@@ -46,7 +46,7 @@ pub trait IJoker {
     #[allow(unused_variables, dead_code)]
     fn on_another_card_sold(&mut self, _card: &dyn ICard) {}
 
-    /// 打出手牌时触发, 如裤子
+    /// 打出手牌时触发, 算分前, 如裤子
     #[allow(unused_variables)]
     fn on_play_hand(&mut self, hands: &Vec<Gd<PokerSprite>>, pokerhand: Category) {}
 
@@ -73,9 +73,9 @@ pub trait IJoker {
     #[allow(unused_variables, dead_code)]
     fn on_card_used(&mut self, _card: &dyn IUseableCard) {}
 
-    /// 打出牌时调用, 如“每打出一个红桃+3倍率”
+    /// 计算单卡得分时调用, 如“每打出一个红桃+3倍率”
     #[allow(unused_variables)]
-    fn on_card_played(
+    fn on_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
         hands: &mut Vec<Gd<PokerSprite>>,
@@ -83,9 +83,9 @@ pub trait IJoker {
     ) {
     }
 
-    /// 打出牌后调用, 如“打出牌数少于3时+20倍率”
+    /// 最后计算整手牌得分时调用, 如“打出牌数少于3时+20倍率”
     #[allow(unused_variables)]
-    fn post_card_played(
+    fn post_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
         hands: &mut Vec<Gd<PokerSprite>>,

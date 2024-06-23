@@ -33,6 +33,62 @@ impl Suit {
         }
     }
 }
+
+/// 卡面值
+#[derive(Copy, Clone, PartialEq, Debug)]
+pub enum PokerRank {
+    /// NotUsed
+    NotUsed,
+    /// A
+    A,
+    /// 2
+    Two,
+    /// 3
+    Three,
+    /// 4
+    Four,
+    /// 5
+    Five,
+    /// 6
+    Six,
+    /// 7
+    Seven,
+    /// 8
+    Eight,
+    /// 9
+    Nine,
+    /// 10
+    Ten,
+    /// J
+    J,
+    /// Q
+    Q,
+    /// K
+    K,
+}
+
+// TODO: 提前错误处理
+impl PokerRank {
+    pub fn from_i64(value: i64) -> Self {
+        match value {
+            1 => Self::A,
+            2 => Self::Two,
+            3 => Self::Three,
+            4 => Self::Four,
+            5 => Self::Five,
+            6 => Self::Six,
+            7 => Self::Seven,
+            8 => Self::Eight,
+            9 => Self::Nine,
+            10 => Self::Ten,
+            11 => Self::J,
+            12 => Self::Q,
+            13 => Self::K,
+            _ => Self::NotUsed,
+        }
+    }
+}
+
 #[derive(GodotClass)]
 #[class(base=Sprite2D)]
 pub struct PokerSprite {
@@ -48,7 +104,8 @@ pub struct PokerSprite {
 pub struct Poker {
     /// 花色
     pub suit: Suit,
-    pub value: i64,
+    /// 卡面值
+    pub rank: PokerRank,
     /// 基础筹码
     pub base_chip: i64,
     /// 额外筹码
@@ -60,7 +117,7 @@ impl Poker {
     pub fn new() -> Self {
         Self {
             suit: Suit::NotUsed,
-            value: 0,
+            rank: PokerRank::NotUsed,
             base_chip: 0,
             extra_chip: 0,
             is_valid: false,
@@ -151,7 +208,7 @@ impl Poker {
             3 => Suit::Diamonds,
             _ => Suit::NotUsed,
         };
-        self.value = value;
+        self.rank = PokerRank::from_i64(value);
         // self.value_str = match value{
         //     1 => "A".to_string(),
         //     11 => "J".to_string(),
@@ -174,9 +231,13 @@ impl Poker {
             0
         }
     }
+
+    #[deprecated(note = "直接改")]
     pub fn set_extra_chip(&mut self, chip: i64) {
         self.extra_chip = chip;
     }
+
+    #[deprecated(note = "直接改")]
     pub fn set_valid(&mut self, is_valid: bool) {
         self.is_valid = is_valid;
     }
@@ -187,6 +248,6 @@ impl Poker {
         self.suit
     }
     pub fn get_value(&self) -> i64 {
-        self.value
+        self.rank as i64
     }
 }

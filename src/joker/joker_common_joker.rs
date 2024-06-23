@@ -32,7 +32,7 @@ impl IJoker for CommonJoker {
         self.mult = CommonJoker::BASE_MULT;
     }
 
-    fn post_card_played(
+    fn post_calculate_poker_score(
         &mut self,
         score: &mut ScoringInfo,
         _cards: &mut Vec<Gd<PokerSprite>>,

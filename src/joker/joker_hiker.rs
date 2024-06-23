@@ -14,7 +14,6 @@ use super::joker::{IJoker, IJokerCard, IJokerSpritePath, JokerDisplayInfo, Joker
 #[derive(Default, Clone)]
 pub struct Hiker {
     pub price: i32,
-    pub mult: i64,
 }
 
 impl ICard for Hiker {
@@ -31,7 +30,7 @@ impl IJoker for Hiker {
         self.price = 4;
     }
 
-    fn on_card_played(
+    fn on_calculate_poker_score(
         &mut self,
         _: &mut ScoringInfo,
         hands: &mut Vec<Gd<PokerSprite>>,
