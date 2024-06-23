@@ -6,7 +6,7 @@ use crate::{
     },
 };
 use godot::{
-    engine::{ISprite2D, Sprite2D},
+    engine::{ISprite2D, Sprite2D, Texture2D},
     prelude::*,
 };
 
@@ -66,7 +66,12 @@ pub trait IJoker {
     fn on_skip_blind(&mut self) {}
 }
 
-pub trait IJokerCard: ICard + IJoker {}
+pub trait IJokerSpritePath{
+    fn get_sprite_path(&self) -> String;
+
+}
+
+pub trait IJokerCard: ICard + IJoker + IJokerSpritePath {}
 
 #[derive(GodotClass)]
 #[class(base=Sprite2D)]
@@ -79,5 +84,15 @@ pub struct JokerSprite {
 impl ISprite2D for JokerSprite {
     fn init(base: Base<Sprite2D>) -> Self {
         JokerSprite { base, joker: None }
+    }
+}
+ 
+#[godot_api]
+impl JokerSprite {
+    pub fn set_texture(&mut self) {
+        if let Some(joker) = &self.joker {
+            let texture = load::<Texture2D>(joker.get_sprite_path());
+            self.base_mut().set_texture(texture);
+        }
     }
 }

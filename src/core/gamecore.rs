@@ -515,6 +515,10 @@ impl GameCore {
             base,
             joker: Some(Box::new(SpareTrousers::new())),
         }));
+
+        self.joker_pool
+            .iter_mut()
+            .for_each(|x| x.bind_mut().set_texture());
     }
 
     pub fn initialize_poker_deck(&mut self) {
@@ -532,4 +536,14 @@ impl GameCore {
             list.swap(n, k);
         }
     }
+
+    #[func]
+    pub fn get_random_joker(&mut self) -> Gd<JokerSprite> {
+        godot_print!("get_random_joker");
+        let mut rng = self.joker_rng.bind_mut();
+        let index = rng.gen() as usize % self.joker_pool.len();
+        self.joker_pool[index].bind_mut().base_mut().duplicate().unwrap().cast::<JokerSprite>()
+    }
+
+    
 }

@@ -8,7 +8,7 @@ use crate::{
     },
 };
 
-use super::joker::{IJoker, IJokerCard, JokerRarity};
+use super::joker::{IJoker, IJokerCard, IJokerSpritePath, JokerRarity};
 
 /// 小丑
 #[derive(Default, Clone)]
@@ -37,7 +37,7 @@ impl IJoker for CommonJoker {
         self.description = "+4 倍率".to_string();
         self.price = 4;
         self.mult = 4;
-        self.sprite_path = "res://joker/common_joker.png".to_string();
+        self.sprite_path = "res://images/jokers/common_joker.jpg".to_string();
     }
 
     fn cal_final_chip_mag(
@@ -47,6 +47,13 @@ impl IJoker for CommonJoker {
         _category: Category,
     ) {
         score.mult += self.mult as f64;
+    }
+}
+
+
+impl IJokerSpritePath for CommonJoker {
+    fn get_sprite_path(&self) -> String {
+        self.sprite_path.clone()
     }
 }
 
