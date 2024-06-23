@@ -1,3 +1,5 @@
+use std::borrow::BorrowMut;
+
 use godot::{engine::Time, prelude::*};
 
 use crate::{
@@ -5,6 +7,7 @@ use crate::{
     joker::{
         joker::JokerSprite,
         joker_common_joker::CommonJoker,
+        joker_hiker::Hiker,
         joker_spare_trousers::SpareTrousers,
         joker_suit_mult_joker::{
             ClubsMultJoker, DiamondsMultJoker, HeartsMultJoker, SpadesMultJoker,
@@ -253,7 +256,7 @@ impl GameCore {
         // 打出某种牌型时, 触发joker钩子
         for joker in self.joker_list.iter_mut() {
             if let Some(joker_card) = joker.bind_mut().joker.as_mut() {
-                joker_card.on_play_card(&self.selected_pokers, played_category);
+                joker_card.on_play_hand(&self.selected_pokers, played_category);
             }
         }
         // 3. 处理算分
@@ -300,7 +303,7 @@ impl GameCore {
         // 弃掉某种牌型时触发joker钩子
         for joker in self.joker_list.iter_mut() {
             if let Some(joker_card) = joker.bind_mut().joker.as_mut() {
-                joker_card.on_discard_card(&self.selected_pokers, played_category);
+                joker_card.on_discard_poker(&self.selected_pokers, played_category);
             }
         }
         // TODO: 弃牌触发蜡封
@@ -535,6 +538,10 @@ impl GameCore {
             base,
             joker: Some(Box::new(ClubsMultJoker::new())),
         }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(Hiker::new())),
+        }));
 
         self.joker_pool
             .iter_mut()
@@ -589,6 +596,7 @@ impl GameCore {
         if self.joker_list.len() >= self.joker_list_limit as usize {
             return;
         }
+        joker.clone().bind_mut().joker.as_mut().unwrap().on_equip();
         self.joker_list.push(joker);
     }
     #[func]

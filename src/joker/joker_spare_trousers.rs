@@ -34,7 +34,7 @@ impl IJoker for SpareTrousers {
         self.description = Self::DESCRIPTION_FORMAT.replace("{}", self.mult.to_string().as_str());
     }
 
-    fn on_play_card(&mut self, _cards: &Vec<Gd<PokerSprite>>, pokerhand: Category) {
+    fn on_play_hand(&mut self, _cards: &Vec<Gd<PokerSprite>>, pokerhand: Category) {
         match pokerhand {
             Category::FullHouse | Category::TwoPair => {
                 self.mult += Self::MULT_ADD;
@@ -74,6 +74,9 @@ impl IJokerSpritePath for SpareTrousers {
 impl IJokerCard for SpareTrousers {}
 
 impl SpareTrousers {
+    #[allow(dead_code)]
+    const ID: i32 = 5;
+
     const NAME_ZH: &'static str = "备用裤子";
 
     #[allow(dead_code)]
@@ -88,6 +91,7 @@ impl SpareTrousers {
 
     const MULT_ADD: i64 = 2;
 
+    // TODO
     const SPRITE_PATH: &'static str = "res://images/jokers/spare_trousers.jpg";
 
     pub fn new() -> Self {

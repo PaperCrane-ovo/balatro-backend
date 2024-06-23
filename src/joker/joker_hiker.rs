@@ -10,14 +10,14 @@ use crate::{
 
 use super::joker::{IJoker, IJokerCard, IJokerSpritePath, JokerDisplayInfo, JokerRarity};
 
-/// 小丑
+/// 徒步者
 #[derive(Default, Clone)]
-pub struct CommonJoker {
+pub struct Hiker {
     pub price: i32,
     pub mult: i64,
 }
 
-impl ICard for CommonJoker {
+impl ICard for Hiker {
     fn get_price(&self) -> i32 {
         self.price
     }
@@ -26,19 +26,20 @@ impl ICard for CommonJoker {
     }
 }
 
-impl IJoker for CommonJoker {
+impl IJoker for Hiker {
     fn initialize(&mut self) {
         self.price = 4;
-        self.mult = CommonJoker::BASE_MULT;
     }
 
-    fn post_card_played(
+    fn on_card_played(
         &mut self,
-        score: &mut ScoringInfo,
-        _cards: &mut Vec<Gd<PokerSprite>>,
-        _category: Category,
+        _: &mut ScoringInfo,
+        hands: &mut Vec<Gd<PokerSprite>>,
+        _: Category,
     ) {
-        score.mult += self.mult as f64;
+        hands
+            .iter_mut()
+            .for_each(|x| x.bind_mut().poker.extra_chip += Self::POKER_CHIPS_ADD);
     }
 
     fn get_display_info(&self) -> Gd<super::joker::JokerDisplayInfo> {
@@ -52,33 +53,34 @@ impl IJoker for CommonJoker {
     }
 }
 
-impl IJokerSpritePath for CommonJoker {
+impl IJokerSpritePath for Hiker {
     fn get_sprite_path(&self) -> String {
         Self::SPRITE_PATH.to_string()
     }
 }
 
-impl IJokerCard for CommonJoker {}
+impl IJokerCard for Hiker {}
 
-impl CommonJoker {
+impl Hiker {
     #[allow(dead_code)]
-    const ID: i32 = 0;
+    const ID: i32 = 6;
 
-    const NAME_ZH: &'static str = "小丑";
+    const NAME_ZH: &'static str = "徒步者";
 
     #[allow(dead_code)]
-    const NAME_EN: &'static str = "Joker";
+    const NAME_EN: &'static str = "Hiker";
 
-    const RARITY: JokerRarity = JokerRarity::Common;
+    const RARITY: JokerRarity = JokerRarity::Uncommon;
 
-    const DESCRIPTION: &'static str = "+4倍率";
+    const DESCRIPTION: &'static str = "打出的每一张牌\n在计分时\n会永久获得+5筹码";
 
-    const BASE_MULT: i64 = 4;
+    const POKER_CHIPS_ADD: i64 = 5;
 
+    // TODO
     const SPRITE_PATH: &'static str = "res://images/jokers/common_joker.jpg";
 
     pub fn new() -> Self {
-        let mut joker = CommonJoker::default();
+        let mut joker = Hiker::default();
         joker.initialize();
         joker
     }

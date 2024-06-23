@@ -48,11 +48,11 @@ pub trait IJoker {
 
     /// 打出手牌时触发, 如裤子
     #[allow(unused_variables)]
-    fn on_play_card(&mut self, hands: &Vec<Gd<PokerSprite>>, pokerhand: Category) {}
+    fn on_play_hand(&mut self, hands: &Vec<Gd<PokerSprite>>, pokerhand: Category) {}
 
     /// 弃牌时触发, 如城堡
     #[allow(unused_variables)]
-    fn on_discard_card(&mut self, hands: &Vec<Gd<PokerSprite>>, pokerhand: Category) {}
+    fn on_discard_poker(&mut self, hands: &Vec<Gd<PokerSprite>>, pokerhand: Category) {}
 
     #[allow(unused_variables, dead_code)]
     fn can_be_duplicated(&self) -> bool {

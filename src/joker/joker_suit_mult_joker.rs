@@ -64,6 +64,9 @@ impl IJokerSpritePath for DiamondsMultJoker {
 impl IJokerCard for DiamondsMultJoker {}
 
 impl DiamondsMultJoker {
+    #[allow(dead_code)]
+    const ID: i32 = 1;
+
     const NAME_ZH: &'static str = "贪婪小丑";
 
     #[allow(dead_code)]
@@ -140,6 +143,9 @@ impl IJokerSpritePath for HeartsMultJoker {
 impl IJokerCard for HeartsMultJoker {}
 
 impl HeartsMultJoker {
+    #[allow(dead_code)]
+    const ID: i32 = 2;
+
     const NAME_ZH: &'static str = "色欲小丑";
 
     #[allow(dead_code)]
@@ -216,6 +222,9 @@ impl IJokerSpritePath for SpadesMultJoker {
 impl IJokerCard for SpadesMultJoker {}
 
 impl SpadesMultJoker {
+    #[allow(dead_code)]
+    const ID: i32 = 3;
+
     const NAME_ZH: &'static str = "愤怒小丑";
 
     #[allow(dead_code)]
@@ -292,6 +301,9 @@ impl IJokerSpritePath for ClubsMultJoker {
 impl IJokerCard for ClubsMultJoker {}
 
 impl ClubsMultJoker {
+    #[allow(dead_code)]
+    const ID: i32 = 4;
+
     const NAME_ZH: &'static str = "暴食小丑";
 
     #[allow(dead_code)]
