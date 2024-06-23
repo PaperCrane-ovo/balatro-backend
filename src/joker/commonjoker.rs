@@ -8,7 +8,7 @@ use crate::{
     },
 };
 
-use super::joker::{IJoker, IJokerCard, IJokerSpritePath, JokerRarity};
+use super::joker::{IJoker, IJokerCard, IJokerSpritePath, JokerDisplayInfo, JokerRarity};
 
 /// 小丑
 #[derive(Default, Clone)]
@@ -47,6 +47,16 @@ impl IJoker for CommonJoker {
         _category: Category,
     ) {
         score.mult += self.mult as f64;
+    }
+    
+    fn get_display_info(&self) -> Gd<super::joker::JokerDisplayInfo> {
+        let display_info = JokerDisplayInfo{
+            name:self.name.clone().into(),
+            description:self.description.clone().into(),
+            rarity:self.rarity,
+            price:self.price,
+        };
+        Gd::from_object(display_info)
     }
 }
 

@@ -11,7 +11,9 @@ use godot::{
 };
 
 // 稀有度
-#[derive(Default, Clone)]
+#[derive(GodotConvert,Var,Export)]
+#[derive(Default, Clone , Copy)]
+#[godot(via=GString)]
 pub enum JokerRarity {
     #[default]
     Common,
@@ -22,8 +24,8 @@ pub enum JokerRarity {
 
 pub trait IJoker {
     /// 初始化
-    fn initialize(&mut self);
-
+    fn initialize(&mut self);    
+    fn get_display_info(&self) -> Gd<JokerDisplayInfo>;
     fn on_equip(&mut self) {}
     fn on_another_card_bought(&mut self, _card: &dyn ICard) {}
     fn on_destroyed(&mut self) {}
@@ -95,4 +97,14 @@ impl JokerSprite {
             self.base_mut().set_texture(texture);
         }
     }
+}
+
+
+#[derive(GodotClass)]
+#[class(init)]
+pub struct JokerDisplayInfo{
+    pub name: StringName,
+    pub description: StringName,
+    pub rarity: JokerRarity,
+    pub price: i32,
 }

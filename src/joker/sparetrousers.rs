@@ -64,6 +64,16 @@ impl IJoker for SpareTrousers {
     ) {
         score.mult += self.mult as f64;
     }
+
+    fn get_display_info(&self) -> Gd<super::joker::JokerDisplayInfo> {
+        let display_info = super::joker::JokerDisplayInfo {
+            name: self.name.clone().into(),
+            description: self.description.clone().into(),
+            rarity: self.rarity,
+            price: self.price,
+        };
+        Gd::from_object(display_info)
+    }
 }
 
 impl IJokerSpritePath for SpareTrousers {
