@@ -196,18 +196,18 @@ use super::poker::PokerSprite;
 // }
 
 /// 存储筹码和倍率信息, 可用于一次出牌的计算
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct ScoringInfo {
     /// 筹码
     pub chips: i64,
     /// 倍率
-    pub mult: i64,
+    pub mult: f64,
 }
 
 impl ScoringInfo {
     /// 计算筹码乘倍率
     pub fn get_score(&self) -> i64 {
-        self.chips * self.mult
+        (self.chips as f64 * self.mult) as i64
     }
 }
 
@@ -382,17 +382,17 @@ impl Category {
     /// 计算牌型对应的默认筹码和倍率
     pub fn get_chip_mag(&self) -> ScoringInfo {
         let (chips, mult) = match self {
-            Category::Null => (0, 0),
-            Category::HighCard => (5, 1),
-            Category::OnePair => (10, 2),
-            Category::TwoPair => (20, 2),
-            Category::ThreeOfAKind => (30, 3),
-            Category::Straight => (30, 4),
-            Category::Flush => (35, 4),
-            Category::FullHouse => (40, 4),
-            Category::FourOfAKind => (60, 7),
-            Category::StraightFlush => (100, 8),
-            Category::RoyalFlush => (100, 8),
+            Category::Null => (0, 0.),
+            Category::HighCard => (5, 1.),
+            Category::OnePair => (10, 2.),
+            Category::TwoPair => (20, 2.),
+            Category::ThreeOfAKind => (30, 3.),
+            Category::Straight => (30, 4.),
+            Category::Flush => (35, 4.),
+            Category::FullHouse => (40, 4.),
+            Category::FourOfAKind => (60, 7.),
+            Category::StraightFlush => (100, 8.),
+            Category::RoyalFlush => (100, 8.),
         };
         ScoringInfo { chips, mult }
     }

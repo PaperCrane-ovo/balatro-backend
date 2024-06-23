@@ -17,7 +17,7 @@ pub struct CommonJoker {
     pub rarity: JokerRarity,
     pub description: String,
     pub price: i32,
-    pub magnification: i64,
+    pub mult: i64,
     pub sprite_path: String,
 }
 
@@ -36,7 +36,7 @@ impl IJoker for CommonJoker {
         self.rarity = JokerRarity::Common;
         self.description = "+4 倍率".to_string();
         self.price = 4;
-        self.magnification = 4;
+        self.mult = 4;
         self.sprite_path = "res://joker/common_joker.png".to_string();
     }
 
@@ -46,7 +46,7 @@ impl IJoker for CommonJoker {
         _cards: &mut Vec<Gd<PokerSprite>>,
         _category: Category,
     ) {
-        score.mult += self.magnification;
+        score.mult += self.mult as f64;
     }
 }
 

@@ -62,7 +62,7 @@ impl IJoker for SpareTrousers {
         _cards: &mut Vec<Gd<PokerSprite>>,
         _category: Category,
     ) {
-        score.mult += self.mult;
+        score.mult += self.mult as f64;
     }
 }
 

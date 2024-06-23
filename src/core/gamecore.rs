@@ -150,24 +150,24 @@ impl GameCore {
     }
 
     #[func]
-    pub fn win_current_blind(&mut self){
-        if self.cur_blind_index == 2{
-            if self.cur_ante < self.max_ante{
+    pub fn win_current_blind(&mut self) {
+        if self.cur_blind_index == 2 {
+            if self.cur_ante < self.max_ante {
                 self.cur_ante += 1;
                 self.initialize_blind();
-            }else{
+            } else {
                 self.game_state = GameState::FinalWin;
             }
-        }else{
+        } else {
             self.blinds[self.cur_blind_index as usize].bind_mut().state = BlindState::Killed;
             self.cur_blind_index += 1;
             self.blinds[self.cur_blind_index as usize].bind_mut().state = BlindState::Choose;
         }
         self.reset_player_message();
-        self.poker_deck.iter_mut().for_each(|x| x.bind_mut().is_selected = false);
-
+        self.poker_deck
+            .iter_mut()
+            .for_each(|x| x.bind_mut().is_selected = false);
     }
-
 
     #[func]
     pub fn get_specific_pile_count(&self, pile: StringName) -> i32 {
@@ -193,7 +193,7 @@ impl GameCore {
         self.hand_pile.clear();
         self.discard_pile.clear();
         self.draw_pile.clear();
-        for poker in self.poker_deck.iter(){
+        for poker in self.poker_deck.iter() {
             self.draw_pile.push(poker.clone());
         }
         // 2. 洗牌
