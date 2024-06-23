@@ -39,7 +39,7 @@ impl IJoker for SpareTrousers {
         self.rarity = JokerRarity::Uncommon;
         self.price = 4;
         self.mult = 0;
-        self.sprite_path = "res://images/jokers/spare_trousers.png".to_string();
+        self.sprite_path = "res://images/jokers/spare_trousers.jpg".to_string();
         self.description_format =
             "如果打出的牌中包含\n两对\n则这张小丑牌获得+2倍率\n当前为{}".to_string();
         self.description = self

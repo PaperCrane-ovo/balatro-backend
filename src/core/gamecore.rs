@@ -72,6 +72,8 @@ pub struct GameCore {
     pub cur_blind_index: i32,
 
     pub joker_list: Vec<Gd<JokerSprite>>,
+    #[var]
+    pub joker_list_limit: i32,
     pub poker_deck: Vec<Gd<PokerSprite>>,
 
     pub categories: Vec<Category>,
@@ -421,6 +423,7 @@ impl GameCore {
         self.max_discard_count = 3;
 
         self.cur_score = 0;
+        self.joker_list_limit = 6;
     }
 
     pub fn reset_player_message(&mut self) {
@@ -539,11 +542,40 @@ impl GameCore {
 
     #[func]
     pub fn get_random_joker(&mut self) -> Gd<JokerSprite> {
-        godot_print!("get_random_joker");
         let mut rng = self.joker_rng.bind_mut();
-        let index = rng.gen() as usize % self.joker_pool.len();
-        self.joker_pool[index].bind_mut().base_mut().duplicate().unwrap().cast::<JokerSprite>()
+        let index = rng.gen() as usize;
+        godot_print!("get_random_joker index:{} , index % self.joker_pool.len():{}", index, index % self.joker_pool.len());
+        let index = index % self.joker_pool.len();
+        let mut joker = self.joker_pool[index]
+            .bind_mut()
+            .base_mut()
+            .duplicate()
+            .unwrap()
+            .cast::<JokerSprite>();
+        joker.bind_mut().joker = Some(dyn_clone::clone_box(
+            self.joker_pool[index]
+                .bind()
+                .joker
+                .as_ref()
+                .unwrap()
+                .as_ref()
+        ));
+        joker.bind_mut().set_texture();
+        joker
     }
-
-    
+    #[func]
+    pub fn push_joker(&mut self, joker: Gd<JokerSprite>) {
+        if self.joker_list.len() >= self.joker_list_limit as usize {
+            return;
+        }
+        self.joker_list.push(joker);
+    }
+    #[func]
+    pub fn get_joker_list(&self) -> Array<Gd<JokerSprite>> {
+        let mut joker_list = Array::new();
+        for i in self.joker_list.iter() {
+            joker_list.push(i.clone());
+        }
+        joker_list
+    }
 }

@@ -5,6 +5,7 @@ use crate::{
         poker::{Poker, PokerSprite},
     },
 };
+use dyn_clone::DynClone;
 use godot::{
     engine::{ISprite2D, Sprite2D, Texture2D},
     prelude::*,
@@ -73,7 +74,7 @@ pub trait IJokerSpritePath{
 
 }
 
-pub trait IJokerCard: ICard + IJoker + IJokerSpritePath {}
+pub trait IJokerCard: ICard + IJoker + IJokerSpritePath + DynClone {}
 
 #[derive(GodotClass)]
 #[class(base=Sprite2D)]
@@ -97,14 +98,22 @@ impl JokerSprite {
             self.base_mut().set_texture(texture);
         }
     }
+    #[func]
+    pub fn get_display_info(&self) -> Gd<JokerDisplayInfo> {
+        self.joker.as_ref().unwrap().get_display_info()
+    }
 }
 
 
 #[derive(GodotClass)]
 #[class(init)]
 pub struct JokerDisplayInfo{
-    pub name: StringName,
-    pub description: StringName,
+    #[var]
+    pub name: GString,
+    #[var]
+    pub description: GString,
+    #[var]
     pub rarity: JokerRarity,
+    #[var]
     pub price: i32,
 }
