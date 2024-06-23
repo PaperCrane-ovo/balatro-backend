@@ -10,7 +10,7 @@ use crate::{
     },
 };
 
-use super::joker::{IJoker, IJokerCard, JokerRarity};
+use super::joker::{IJoker, IJokerCard, IJokerSpritePath, JokerRarity};
 
 /// 备用裤子
 #[derive(Default, Clone)]
@@ -63,6 +63,12 @@ impl IJoker for SpareTrousers {
         _category: Category,
     ) {
         score.mult += self.mult as f64;
+    }
+}
+
+impl IJokerSpritePath for SpareTrousers {
+    fn get_sprite_path(&self) -> String {
+        self.sprite_path.clone()
     }
 }
 
