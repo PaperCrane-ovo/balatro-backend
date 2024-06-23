@@ -78,7 +78,9 @@ pub struct GameCore {
     #[var]
     pub cur_score: i64,
     #[var]
-    pub this_round_score: Array<i64>,
+    pub this_round_score_mult: f64,
+    #[var]
+    pub this_round_score_chip: i64,
     #[var]
     pub game_state: GameState,
 }
@@ -105,7 +107,8 @@ impl GameCore {
         godot_print!("GameCore initialize_poker_deck");
         self.initialize_poker_deck();
 
-        self.this_round_score.resize(2, &0);
+        self.this_round_score_chip = 0;
+        self.this_round_score_mult = 0.0;
         self.game_state = GameState::StillPlaying;
     }
 
@@ -271,8 +274,8 @@ impl GameCore {
             }
         }
 
-        self.this_round_score.set(0, score.chips);
-        self.this_round_score.set(1, score.mult);
+        self.this_round_score_chip = score.chips;
+        self.this_round_score_mult = score.mult;
 
         self.cur_score += score.get_score();
 
@@ -340,8 +343,8 @@ impl GameCore {
             }
         }
         let score = category.get_chip_mag();
-        self.this_round_score.set(0, score.chips);
-        self.this_round_score.set(1, score.mult);
+        self.this_round_score_chip = score.chips;
+        self.this_round_score_mult = score.mult;
         match category {
             // Category::HighCard => "HighCard".into(),
             // Category::OnePair => "OnePair".into(),
@@ -426,8 +429,8 @@ impl GameCore {
         self.discard_count = self.max_discard_count;
         self.round += 1;
         self.cur_score = 0;
-        self.this_round_score.set(0, 0);
-        self.this_round_score.set(1, 0);
+        self.this_round_score_chip = 0;
+        self.this_round_score_mult = 0.0;
     }
 
     pub fn init_rng(&mut self, seed: i64) {
