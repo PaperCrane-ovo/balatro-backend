@@ -1,5 +1,3 @@
-use std::fmt;
-
 use godot::obj::Gd;
 
 use crate::{
@@ -15,13 +13,9 @@ use super::joker::{IJoker, IJokerCard, IJokerSpritePath, JokerRarity};
 /// 备用裤子
 #[derive(Default, Clone)]
 pub struct SpareTrousers {
-    pub name: String,
-    pub rarity: JokerRarity,
-    pub description_format: String,
     pub description: String,
     pub price: i32,
     pub mult: i64,
-    pub sprite_path: String,
 }
 
 impl ICard for SpareTrousers {
@@ -35,28 +29,23 @@ impl ICard for SpareTrousers {
 
 impl IJoker for SpareTrousers {
     fn initialize(&mut self) {
-        self.name = "Spare Trousers".to_string();
-        self.rarity = JokerRarity::Uncommon;
         self.price = 4;
-        self.mult = 0;
-        self.sprite_path = "res://images/jokers/spare_trousers.jpg".to_string();
-        self.description_format =
-            "如果打出的牌中包含\n两对\n则这张小丑牌获得+2倍率\n当前为{}".to_string();
-        self.description = self
-            .description_format
-            .replace("{}", self.mult.to_string().as_str());
+        self.mult = Self::BASE_MULT;
+        self.description = Self::DESCRIPTION_FORMAT.replace("{}", self.mult.to_string().as_str());
     }
 
     fn on_play_card(&mut self, _cards: &Vec<Gd<PokerSprite>>, pokerhand: Category) {
-        if pokerhand == Category::TwoPair {
-            self.mult += Self::MULT_ADD;
-            self.description = self
-                .description_format
-                .replace("{}", self.mult.to_string().as_str());
-        }
+        match pokerhand {
+            Category::FullHouse | Category::TwoPair => {
+                self.mult += Self::MULT_ADD;
+                self.description =
+                    Self::DESCRIPTION_FORMAT.replace("{}", self.mult.to_string().as_str());
+            }
+            _ => {}
+        };
     }
 
-    fn cal_final_chip_mag(
+    fn post_card_played(
         &mut self,
         score: &mut ScoringInfo,
         _cards: &mut Vec<Gd<PokerSprite>>,
@@ -67,9 +56,9 @@ impl IJoker for SpareTrousers {
 
     fn get_display_info(&self) -> Gd<super::joker::JokerDisplayInfo> {
         let display_info = super::joker::JokerDisplayInfo {
-            name: self.name.clone().into(),
+            name: Self::NAME_ZH.into(),
             description: self.description.clone().into(),
-            rarity: self.rarity,
+            rarity: Self::RARITY,
             price: self.price,
         };
         Gd::from_object(display_info)
@@ -78,14 +67,28 @@ impl IJoker for SpareTrousers {
 
 impl IJokerSpritePath for SpareTrousers {
     fn get_sprite_path(&self) -> String {
-        self.sprite_path.clone()
+        Self::SPRITE_PATH.to_string()
     }
 }
 
 impl IJokerCard for SpareTrousers {}
 
 impl SpareTrousers {
+    const NAME_ZH: &'static str = "备用裤子";
+
+    #[allow(dead_code)]
+    const NAME_EN: &'static str = "Spare Trousers";
+
+    const RARITY: JokerRarity = JokerRarity::Uncommon;
+
+    const DESCRIPTION_FORMAT: &'static str =
+        "如果打出的牌中包含\n两对\n则这张小丑牌获得+2倍率\n当前为{}";
+
+    const BASE_MULT: i64 = 0;
+
     const MULT_ADD: i64 = 2;
+
+    const SPRITE_PATH: &'static str = "res://images/jokers/spare_trousers.jpg";
 
     pub fn new() -> Self {
         let mut joker = SpareTrousers::default();

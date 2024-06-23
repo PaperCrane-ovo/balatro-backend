@@ -9,12 +9,29 @@ use godot::prelude::*;
 /// 花色
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum Suit {
-    Spades,
-    Hearts,
+    /// 梅花
     Clubs,
+    /// 方片
     Diamonds,
-    Stone,
-    NotSet,
+    /// 黑桃
+    Spades,
+    /// 红桃
+    Hearts,
+    NotUsed,
+}
+
+impl Suit {
+    #[allow(dead_code)]
+    /// 返回花色名称：方片、红桃、黑桃、梅花
+    pub fn get_display_suit_name(&self) -> String {
+        match self {
+            Self::Clubs => "梅花".to_string(),
+            Self::Diamonds => "方片".to_string(),
+            Self::Spades => "黑桃".to_string(),
+            Self::Hearts => "红桃".to_string(),
+            _ => "ERROR".to_string(),
+        }
+    }
 }
 #[derive(GodotClass)]
 #[class(base=Sprite2D)]
@@ -42,7 +59,7 @@ pub struct Poker {
 impl Poker {
     pub fn new() -> Self {
         Self {
-            suit: Suit::NotSet,
+            suit: Suit::NotUsed,
             value: 0,
             base_chip: 0,
             extra_chip: 0,
@@ -132,7 +149,7 @@ impl Poker {
             1 => Suit::Hearts,
             2 => Suit::Clubs,
             3 => Suit::Diamonds,
-            _ => Suit::NotSet,
+            _ => Suit::NotUsed,
         };
         self.value = value;
         // self.value_str = match value{

@@ -2,7 +2,14 @@ use godot::{engine::Time, prelude::*};
 
 use crate::{
     blind::{blind::Blind, BlindState, BlindType},
-    joker::{commonjoker::CommonJoker, joker::JokerSprite, sparetrousers::SpareTrousers},
+    joker::{
+        joker::JokerSprite,
+        joker_common_joker::CommonJoker,
+        joker_spare_trousers::SpareTrousers,
+        joker_suit_mult_joker::{
+            ClubsMultJoker, DiamondsMultJoker, HeartsMultJoker, SpadesMultJoker,
+        },
+    },
     poker::{
         category::Category,
         poker::{Poker, PokerSprite},
@@ -255,24 +262,18 @@ impl GameCore {
             // 扑克牌带来的筹码
             score.chips += i.bind().poker.get_chip();
         }
+
         for i in self.joker_list.iter_mut() {
             // 牌对小丑牌的作用
             if let Some(joker_card) = i.bind_mut().joker.as_mut() {
-                joker_card.cal_card_chip_mag(
-                    &mut score,
-                    &mut self.selected_pokers,
-                    played_category,
-                );
+                joker_card.on_card_played(&mut score, &mut self.selected_pokers, played_category);
             }
         }
+
         for i in self.joker_list.iter_mut() {
             // 小丑牌对打出牌组的作用
             if let Some(joker_card) = i.bind_mut().joker.as_mut() {
-                joker_card.cal_final_chip_mag(
-                    &mut score,
-                    &mut self.selected_pokers,
-                    played_category,
-                );
+                joker_card.post_card_played(&mut score, &mut self.selected_pokers, played_category);
             }
         }
 
@@ -518,6 +519,22 @@ impl GameCore {
             base,
             joker: Some(Box::new(SpareTrousers::new())),
         }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(DiamondsMultJoker::new())),
+        }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(HeartsMultJoker::new())),
+        }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(SpadesMultJoker::new())),
+        }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(ClubsMultJoker::new())),
+        }));
 
         self.joker_pool
             .iter_mut()
@@ -544,7 +561,11 @@ impl GameCore {
     pub fn get_random_joker(&mut self) -> Gd<JokerSprite> {
         let mut rng = self.joker_rng.bind_mut();
         let index = rng.gen() as usize;
-        godot_print!("get_random_joker index:{} , index % self.joker_pool.len():{}", index, index % self.joker_pool.len());
+        godot_print!(
+            "get_random_joker index:{} , index % self.joker_pool.len():{}",
+            index,
+            index % self.joker_pool.len()
+        );
         let index = index % self.joker_pool.len();
         let mut joker = self.joker_pool[index]
             .bind_mut()
@@ -558,7 +579,7 @@ impl GameCore {
                 .joker
                 .as_ref()
                 .unwrap()
-                .as_ref()
+                .as_ref(),
         ));
         joker.bind_mut().set_texture();
         joker

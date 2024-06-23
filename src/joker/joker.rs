@@ -2,7 +2,7 @@ use crate::{
     card::card::{ICard, IUseableCard},
     poker::{
         category::{Category, ScoringInfo},
-        poker::{Poker, PokerSprite},
+        poker::PokerSprite,
     },
 };
 use dyn_clone::DynClone;
@@ -12,8 +12,7 @@ use godot::{
 };
 
 // 稀有度
-#[derive(GodotConvert,Var,Export)]
-#[derive(Default, Clone , Copy)]
+#[derive(GodotConvert, Var, Export, Default, Clone, Copy)]
 #[godot(via=GString)]
 pub enum JokerRarity {
     #[default]
@@ -25,53 +24,81 @@ pub enum JokerRarity {
 
 pub trait IJoker {
     /// 初始化
-    fn initialize(&mut self);    
+    fn initialize(&mut self);
+
     fn get_display_info(&self) -> Gd<JokerDisplayInfo>;
+
+    #[allow(unused_variables, dead_code)]
     fn on_equip(&mut self) {}
+
+    #[allow(unused_variables, dead_code)]
     fn on_another_card_bought(&mut self, _card: &dyn ICard) {}
+
+    #[allow(unused_variables, dead_code)]
     fn on_destroyed(&mut self) {}
+
+    #[allow(unused_variables, dead_code)]
     fn on_another_card_destroyed(&mut self, _card: &dyn ICard) {}
+
+    #[allow(unused_variables, dead_code)]
     fn on_sold(&mut self) {}
+
+    #[allow(unused_variables, dead_code)]
     fn on_another_card_sold(&mut self, _card: &dyn ICard) {}
 
     /// 打出手牌时触发, 如裤子
-    fn on_play_card(&mut self, _cards: &Vec<Gd<PokerSprite>>, pokerhand: Category) {}
+    #[allow(unused_variables)]
+    fn on_play_card(&mut self, hands: &Vec<Gd<PokerSprite>>, pokerhand: Category) {}
 
     /// 弃牌时触发, 如城堡
-    fn on_discard_card(&mut self, _cards: &Vec<Gd<PokerSprite>>, pokerhand: Category) {}
+    #[allow(unused_variables)]
+    fn on_discard_card(&mut self, hands: &Vec<Gd<PokerSprite>>, pokerhand: Category) {}
+
+    #[allow(unused_variables, dead_code)]
     fn can_be_duplicated(&self) -> bool {
         true
     }
+
+    #[allow(unused_variables, dead_code)]
     fn can_be_sold(&self) -> bool {
         true
     }
+
+    #[allow(unused_variables)]
     fn on_enter_room(&mut self) {}
+
+    #[allow(unused_variables, dead_code)]
     fn on_battle_win(&mut self) {}
+
+    #[allow(unused_variables, dead_code)]
     fn on_card_used(&mut self, _card: &dyn IUseableCard) {}
 
-    /// 牌对小丑牌的作用, 如“每打出一个红桃+3倍率”
-    fn cal_card_chip_mag(
+    /// 打出牌时调用, 如“每打出一个红桃+3倍率”
+    #[allow(unused_variables)]
+    fn on_card_played(
         &mut self,
-        _score: &mut ScoringInfo,
-        _cards: &mut Vec<Gd<PokerSprite>>,
-        _category: Category,
+        score_info: &mut ScoringInfo,
+        hands: &mut Vec<Gd<PokerSprite>>,
+        pokerhand: Category,
     ) {
     }
 
-    /// 小丑牌对打出牌组的作用, 如“打出牌数少于3时+20倍率”
-    fn cal_final_chip_mag(
+    /// 打出牌后调用, 如“打出牌数少于3时+20倍率”
+    #[allow(unused_variables)]
+    fn post_card_played(
         &mut self,
-        _score: &mut ScoringInfo,
-        _cards: &mut Vec<Gd<PokerSprite>>,
-        _category: Category,
+        score_info: &mut ScoringInfo,
+        hands: &mut Vec<Gd<PokerSprite>>,
+        pokerhand: Category,
     ) {
     }
+
+    #[allow(dead_code)]
     fn on_skip_blind(&mut self) {}
 }
 
-pub trait IJokerSpritePath{
+pub trait IJokerSpritePath {
     fn get_sprite_path(&self) -> String;
-
 }
 
 pub trait IJokerCard: ICard + IJoker + IJokerSpritePath + DynClone {}
@@ -89,7 +116,7 @@ impl ISprite2D for JokerSprite {
         JokerSprite { base, joker: None }
     }
 }
- 
+
 #[godot_api]
 impl JokerSprite {
     pub fn set_texture(&mut self) {
@@ -104,10 +131,9 @@ impl JokerSprite {
     }
 }
 
-
 #[derive(GodotClass)]
 #[class(init)]
-pub struct JokerDisplayInfo{
+pub struct JokerDisplayInfo {
     #[var]
     pub name: GString,
     #[var]

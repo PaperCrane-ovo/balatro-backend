@@ -213,16 +213,27 @@ impl ScoringInfo {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Category {
+    /// 未选中状态
     Null,
+    /// 高牌
     HighCard,
+    /// 一对
     OnePair,
+    /// 两对
     TwoPair,
+    /// 三条
     ThreeOfAKind,
+    /// 顺子
     Straight,
+    /// 同花
     Flush,
+    /// 葫芦
     FullHouse,
+    /// 四条
     FourOfAKind,
+    /// 同花顺
     StraightFlush,
+    /// 皇家同花顺
     RoyalFlush,
 }
 
