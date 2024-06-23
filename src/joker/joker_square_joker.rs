@@ -89,7 +89,7 @@ impl SquareJoker {
     const CHIPS_ADD: i64 = 4;
 
     // TODO
-    const SPRITE_PATH: &'static str = "res://images/jokers/common_joker.jpg";
+    const SPRITE_PATH: &'static str = "res://images/jokers/square_joker.png";
 
     pub fn new() -> Self {
         let mut joker = SquareJoker::default();

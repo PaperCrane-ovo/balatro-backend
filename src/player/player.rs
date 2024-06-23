@@ -1,9 +1,9 @@
 use godot::{
-    engine::{Engine, Label},
+    engine::{Engine},
     prelude::*,
 };
 
-use crate::{core::gamecore::GameCore, joker::joker::IJokerCard};
+use crate::{core::gamecore::GameCore};
 
 #[derive(GodotClass)]
 #[class(init,base=Node2D)]

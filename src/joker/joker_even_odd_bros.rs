@@ -1,5 +1,5 @@
 /// 奇偶
-use godot::{builtin::meta::ToGodot, obj::Gd};
+use godot::obj::Gd;
 
 use crate::{
     card::card::ICard,
@@ -85,7 +85,7 @@ impl OddTodd {
 
     const CHIPS_ADD: i64 = 31;
 
-    const SPRITE_PATH: &'static str = "res://images/jokers/odd_todd.jpg";
+    const SPRITE_PATH: &'static str = "res://images/jokers/odd_todd.png";
 
     pub fn new() -> Self {
         let mut joker = OddTodd::default();
@@ -168,7 +168,7 @@ impl EvenSteven {
 
     const MULT_ADD: f64 = 4_f64;
 
-    const SPRITE_PATH: &'static str = "res://images/jokers/even_steven.jpg";
+    const SPRITE_PATH: &'static str = "res://images/jokers/even_steven.png";
 
     pub fn new() -> Self {
         let mut joker = EvenSteven::default();
