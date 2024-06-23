@@ -39,11 +39,11 @@ impl IJoker for OddTodd {
     ) {
         for i in hands.iter_mut().map(|x| x.bind().poker) {
             match i.rank {
-                PokerRank::Two
-                | PokerRank::Four
-                | PokerRank::Six
-                | PokerRank::Eight
-                | PokerRank::Ten => {
+                PokerRank::A
+                | PokerRank::Three
+                | PokerRank::Five
+                | PokerRank::Seven
+                | PokerRank::Nine => {
                     score_info.chips += Self::CHIPS_ADD;
                 }
                 _ => {}
@@ -122,11 +122,11 @@ impl IJoker for EvenSteven {
     ) {
         for i in hands.iter_mut().map(|x| x.bind().poker) {
             match i.rank {
-                PokerRank::A
-                | PokerRank::Three
-                | PokerRank::Five
-                | PokerRank::Seven
-                | PokerRank::Nine => {
+                PokerRank::Two
+                | PokerRank::Four
+                | PokerRank::Six
+                | PokerRank::Eight
+                | PokerRank::Ten => {
                     score_info.mult += Self::MULT_ADD;
                 }
                 _ => {}
