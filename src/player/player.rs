@@ -1,9 +1,9 @@
 use godot::{
-    engine::{Engine},
+    engine::Engine,
     prelude::*,
 };
 
-use crate::{core::gamecore::GameCore};
+use crate::core::gamecore::GameCore;
 
 #[derive(GodotClass)]
 #[class(init,base=Node2D)]
@@ -24,27 +24,27 @@ pub struct Player {
 
 #[godot_api]
 impl Player {
-    pub fn initialize_message(
-        &mut self,
-        _gold: i32,
-        _round: i32,
-        _play_hand_count: i32,
-        _discard_count: i32,
-        _cur_ante: i32,
-        _max_ante: i32,
-    ) {
-        let mut binding = Engine::singleton()
-            .get_singleton("GameCore".into())
-            .unwrap()
-            .cast::<GameCore>();
-        let mut gamecore = binding.bind_mut();
-        gamecore.gold = _gold;
-        gamecore.round = _round;
-        gamecore.play_hand_count = _play_hand_count;
-        gamecore.discard_count = _discard_count;
-        gamecore.cur_ante = _cur_ante;
-        gamecore.max_ante = _max_ante;
-    }
+    // pub fn initialize_message(
+    //     &mut self,
+    //     _gold: i32,
+    //     _round: i32,
+    //     _play_hand_count: i32,
+    //     _discard_count: i32,
+    //     _cur_ante: i32,
+    //     _max_ante: i32,
+    // ) {
+    //     let mut binding = Engine::singleton()
+    //         .get_singleton("GameCore".into())
+    //         .unwrap()
+    //         .cast::<GameCore>();
+    //     let mut gamecore = binding.bind_mut();
+    //     gamecore.gold = _gold;
+    //     gamecore.round = _round;
+    //     gamecore.play_hand_count = _play_hand_count;
+    //     gamecore.discard_count = _discard_count;
+    //     gamecore.cur_ante = _cur_ante;
+    //     gamecore.max_ante = _max_ante;
+    // }
 
     #[func]
     pub fn get_message(&mut self) -> Dictionary {

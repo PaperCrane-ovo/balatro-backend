@@ -232,15 +232,6 @@ impl Poker {
         }
     }
 
-    #[deprecated(note = "直接改")]
-    pub fn set_extra_chip(&mut self, chip: i64) {
-        self.extra_chip = chip;
-    }
-
-    #[deprecated(note = "直接改")]
-    pub fn set_valid(&mut self, is_valid: bool) {
-        self.is_valid = is_valid;
-    }
     pub fn get_valid(&self) -> bool {
         self.is_valid
     }

@@ -142,24 +142,6 @@ impl GameCore {
     }
 
     #[func]
-    #[deprecated(note = "use get_blinds instead")]
-
-    pub fn get_blind_state(&self) -> Array<i32> {
-        godot_print!("get_blinds");
-        let mut state = Array::new();
-        for i in 0..3 {
-            state.insert(i, {
-                match self.blinds[i].bind().state {
-                    BlindState::NotChoose => 0,
-                    BlindState::Choose => 1,
-                    BlindState::Skip => 2,
-                    BlindState::Killed => 3,
-                }
-            })
-        }
-        state
-    }
-    #[func]
     pub fn set_blinds(&mut self, state: Array<i32>) {
         for i in 0..3 {
             self.blinds[i].bind_mut().state = match state.get(i) {
@@ -677,5 +659,15 @@ impl GameCore {
         joker.clone().bind_mut().joker.as_mut().unwrap().on_sold();
 
         self.gold += joker.clone().bind().joker.as_ref().unwrap().get_price();
+    }
+    #[func]
+    pub fn swap_joker(&mut self,joker:Gd<JokerSprite>,index:i32) -> i32{
+        let i = self.joker_list.iter().position(|x| x == &joker).unwrap();
+        let index = i as i32 + index;
+        if index < 0 || index >= self.joker_list.len() as i32 {
+            return -1;
+        }
+        self.joker_list.swap(i,index as usize);
+        index
     }
 }

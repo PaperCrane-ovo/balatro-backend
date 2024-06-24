@@ -1,4 +1,6 @@
+#![allow(dead_code)]
 /// 消耗牌和小丑牌的价格性
+
 pub trait ICard {
     fn get_price(&self) -> i32;
     fn set_price(&mut self, price: i32);

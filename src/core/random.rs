@@ -20,14 +20,6 @@ impl LinearCongruentialGenerator {
         self.state
     }
 
-    pub fn from_state(seed: u64, state: u64) -> Self {
-        Self { state, seed }
-    }
-
-    pub fn get_state(&self) -> u64 {
-        self.state
-    }
-
     pub fn set_seed(&mut self, seed: i64) {
         self.seed = seed as u64;
         self.state = seed as u64;
