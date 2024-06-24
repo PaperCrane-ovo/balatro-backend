@@ -2,6 +2,7 @@ use godot::obj::Gd;
 
 use crate::{
     card::card::ICard,
+    core::gamecore::GameCoreContext,
     poker::{
         category::{Category, ScoringInfo},
         poker::PokerSprite,
@@ -29,7 +30,7 @@ impl ICard for SquareJoker {
 
 impl IJoker for SquareJoker {
     fn initialize(&mut self) {
-        self.price = 4;
+        self.price = 2;
         self.chips = Self::BASE_CHIPS;
         self.description = Self::DESCRIPTION_FORMAT.replace("{}", self.chips.to_string().as_str());
     }
@@ -47,6 +48,7 @@ impl IJoker for SquareJoker {
         score_info: &mut ScoringInfo,
         _: &mut Vec<Gd<PokerSprite>>,
         _: Category,
+        _: GameCoreContext,
     ) {
         score_info.chips += self.chips;
     }

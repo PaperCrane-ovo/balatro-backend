@@ -1,4 +1,3 @@
-
 use godot::{engine::Time, prelude::*};
 
 use crate::{
@@ -7,7 +6,10 @@ use crate::{
         joker::JokerSprite,
         joker_common_joker::CommonJoker,
         joker_even_odd_bros::{EvenSteven, OddTodd},
+        joker_gold_jokers::{Bootstraps, Bull},
         joker_hiker::Hiker,
+        joker_legendary_jokers::Yorick,
+        joker_pokerhand_multer_joker::{TheDuo, TheOrder},
         joker_spare_trousers::SpareTrousers,
         joker_square_joker::SquareJoker,
         joker_suit_mult_joker::{
@@ -34,6 +36,11 @@ impl Default for GameState {
     fn default() -> Self {
         GameState::StillPlaying
     }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct GameCoreContext {
+    pub gold: i32,
 }
 
 #[derive(GodotClass)]
@@ -266,26 +273,23 @@ impl GameCore {
         for i in self.selected_pokers.iter() {
             // 扑克牌带来的筹码
             score.chips += i.bind().poker.get_chip();
-        }
-
-        for i in self.joker_list.iter_mut() {
-            // 牌对小丑牌的作用
-            if let Some(joker_card) = i.bind_mut().joker.as_mut() {
-                joker_card.on_calculate_poker_score(
-                    &mut score,
-                    &mut self.selected_pokers,
-                    played_category,
-                );
+            for j in self.joker_list.iter_mut() {
+                // 扑克牌对小丑牌的作用
+                if let Some(joker_card) = j.bind_mut().joker.as_mut() {
+                    joker_card.on_calculate_poker_score(&mut score, &mut i.clone());
+                }
             }
         }
 
         for i in self.joker_list.iter_mut() {
             // 小丑牌对打出牌组的作用
+            let context = GameCoreContext { gold: self.gold };
             if let Some(joker_card) = i.bind_mut().joker.as_mut() {
                 joker_card.post_calculate_poker_score(
                     &mut score,
                     &mut self.selected_pokers,
                     played_category,
+                    context,
                 );
             }
         }
@@ -495,6 +499,7 @@ impl GameCore {
             );
         }
 
+        seed %= 9223372036854775783;
         godot_print!("game seed:{}", seed);
         self.game_seed = seed as i64;
         seed as i64
@@ -522,7 +527,6 @@ impl GameCore {
     }
 
     pub fn generate_joker_pool(&mut self) {
-        // TODO
         self.joker_pool.clear();
         self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
             base,
@@ -564,6 +568,26 @@ impl GameCore {
             base,
             joker: Some(Box::new(EvenSteven::new())),
         }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(Bull::new())),
+        }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(Bootstraps::new())),
+        }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(TheDuo::new())),
+        }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(TheOrder::new())),
+        }));
+        self.joker_pool.push(Gd::from_init_fn(|base| JokerSprite {
+            base,
+            joker: Some(Box::new(Yorick::new())),
+        }));
 
         self.joker_pool
             .iter_mut()
@@ -587,31 +611,39 @@ impl GameCore {
     }
 
     #[func]
-    pub fn get_random_joker(&mut self) -> Gd<JokerSprite> {
+    pub fn get_random_jokers(&mut self, count: i32) -> Array<Gd<JokerSprite>> {
+        let mut jokers = Array::new();
         let mut rng = self.joker_rng.bind_mut();
-        let index = rng.gen() as usize;
-        godot_print!(
-            "get_random_joker index:{} , index % self.joker_pool.len():{}",
-            index,
-            index % self.joker_pool.len()
-        );
-        let index = index % self.joker_pool.len();
-        let mut joker = self.joker_pool[index]
-            .bind_mut()
-            .base_mut()
-            .duplicate()
-            .unwrap()
-            .cast::<JokerSprite>();
-        joker.bind_mut().joker = Some(dyn_clone::clone_box(
-            self.joker_pool[index]
-                .bind()
-                .joker
-                .as_ref()
+        // 临时使用的小丑池
+        let mut temp_joker_pool = self.joker_pool.clone();
+
+        for _ in 0..count {
+            let index = rng.gen() as usize;
+
+            let index = index % temp_joker_pool.len();
+
+            godot_print!("index:{}, len{}", index, temp_joker_pool.len());
+
+            let mut joker = temp_joker_pool[index]
+                .bind_mut()
+                .base_mut()
+                .duplicate()
                 .unwrap()
-                .as_ref(),
-        ));
-        joker.bind_mut().set_texture();
-        joker
+                .cast::<JokerSprite>();
+            joker.bind_mut().joker = Some(dyn_clone::clone_box(
+                temp_joker_pool[index]
+                    .bind()
+                    .joker
+                    .as_ref()
+                    .unwrap()
+                    .as_ref(),
+            ));
+            joker.bind_mut().set_texture();
+            temp_joker_pool.swap_remove(index);
+
+            jokers.push(joker)
+        }
+        jokers
     }
 
     /// 获得小丑
@@ -622,6 +654,12 @@ impl GameCore {
         }
         joker.clone().bind_mut().joker.as_mut().unwrap().on_equip();
         self.joker_list.push(joker);
+    }
+
+    /// 是否可以获得小丑（是否到上限）
+    #[func]
+    pub fn can_push_joker(&self) -> bool {
+        self.joker_list.len() < self.joker_list_limit as usize
     }
 
     #[func]
@@ -637,7 +675,7 @@ impl GameCore {
         self.joker_list.retain(|x| x != &joker);
         // joker unequip
         joker.clone().bind_mut().joker.as_mut().unwrap().on_sold();
-        
+
         self.gold += joker.clone().bind().joker.as_ref().unwrap().get_price();
     }
 }

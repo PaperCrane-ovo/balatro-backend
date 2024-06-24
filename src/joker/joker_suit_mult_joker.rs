@@ -4,7 +4,7 @@ use godot::obj::Gd;
 use crate::{
     card::card::ICard,
     poker::{
-        category::{Category, ScoringInfo},
+        category::ScoringInfo,
         poker::{PokerSprite, Suit},
     },
 };
@@ -28,19 +28,16 @@ impl ICard for DiamondsMultJoker {
 
 impl IJoker for DiamondsMultJoker {
     fn initialize(&mut self) {
-        self.price = 4;
+        self.price = 2;
     }
 
     fn on_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
-        hands: &mut Vec<Gd<PokerSprite>>,
-        _: Category,
+        poker: &mut Gd<PokerSprite>,
     ) {
-        for i in hands.iter_mut().map(|x| x.bind().poker) {
-            if i.suit == Self::BONUS_SUIT {
-                score_info.mult += Self::MULT_ADD;
-            }
+        if poker.bind().poker.suit == Self::BONUS_SUIT {
+            score_info.mult += Self::MULT_ADD;
         }
     }
 
@@ -106,19 +103,16 @@ impl ICard for HeartsMultJoker {
 
 impl IJoker for HeartsMultJoker {
     fn initialize(&mut self) {
-        self.price = 4;
+        self.price = 2;
     }
 
     fn on_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
-        hands: &mut Vec<Gd<PokerSprite>>,
-        _: Category,
+        poker: &mut Gd<PokerSprite>,
     ) {
-        for i in hands.iter_mut().map(|x| x.bind().poker) {
-            if i.suit == Self::BONUS_SUIT {
-                score_info.mult += Self::MULT_ADD;
-            }
+        if poker.bind().poker.suit == Self::BONUS_SUIT {
+            score_info.mult += Self::MULT_ADD;
         }
     }
 
@@ -185,19 +179,16 @@ impl ICard for SpadesMultJoker {
 
 impl IJoker for SpadesMultJoker {
     fn initialize(&mut self) {
-        self.price = 4;
+        self.price = 2;
     }
 
     fn on_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
-        hands: &mut Vec<Gd<PokerSprite>>,
-        _: Category,
+        poker: &mut Gd<PokerSprite>,
     ) {
-        for i in hands.iter_mut().map(|x| x.bind().poker) {
-            if i.suit == Self::BONUS_SUIT {
-                score_info.mult += Self::MULT_ADD;
-            }
+        if poker.bind().poker.suit == Self::BONUS_SUIT {
+            score_info.mult += Self::MULT_ADD;
         }
     }
 
@@ -264,19 +255,16 @@ impl ICard for ClubsMultJoker {
 
 impl IJoker for ClubsMultJoker {
     fn initialize(&mut self) {
-        self.price = 4;
+        self.price = 2;
     }
 
     fn on_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
-        hands: &mut Vec<Gd<PokerSprite>>,
-        _: Category,
+        poker: &mut Gd<PokerSprite>,
     ) {
-        for i in hands.iter_mut().map(|x| x.bind().poker) {
-            if i.suit == Self::BONUS_SUIT {
-                score_info.mult += Self::MULT_ADD;
-            }
+        if poker.bind().poker.suit == Self::BONUS_SUIT {
+            score_info.mult += Self::MULT_ADD;
         }
     }
 

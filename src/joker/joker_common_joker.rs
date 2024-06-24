@@ -2,6 +2,7 @@ use godot::obj::Gd;
 
 use crate::{
     card::card::ICard,
+    core::gamecore::GameCoreContext,
     poker::{
         category::{Category, ScoringInfo},
         poker::PokerSprite,
@@ -28,7 +29,7 @@ impl ICard for CommonJoker {
 
 impl IJoker for CommonJoker {
     fn initialize(&mut self) {
-        self.price = 4;
+        self.price = 1;
         self.mult = CommonJoker::BASE_MULT;
     }
 
@@ -37,6 +38,7 @@ impl IJoker for CommonJoker {
         score: &mut ScoringInfo,
         _cards: &mut Vec<Gd<PokerSprite>>,
         _category: Category,
+        _: GameCoreContext,
     ) {
         score.mult += self.mult as f64;
     }

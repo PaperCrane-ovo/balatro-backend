@@ -1,5 +1,6 @@
 use crate::{
     card::card::{ICard, IUseableCard},
+    core::gamecore::GameCoreContext,
     poker::{
         category::{Category, ScoringInfo},
         poker::PokerSprite,
@@ -40,7 +41,7 @@ pub trait IJoker {
     #[allow(unused_variables, dead_code)]
     fn on_another_card_destroyed(&mut self, _card: &dyn ICard) {}
 
-    #[allow(unused_variables, dead_code)]
+    #[allow(unused_variables)]
     fn on_sold(&mut self) {}
 
     #[allow(unused_variables, dead_code)]
@@ -78,8 +79,7 @@ pub trait IJoker {
     fn on_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
-        hands: &mut Vec<Gd<PokerSprite>>,
-        pokerhand: Category,
+        poker: &mut Gd<PokerSprite>,
     ) {
     }
 
@@ -90,6 +90,7 @@ pub trait IJoker {
         score_info: &mut ScoringInfo,
         hands: &mut Vec<Gd<PokerSprite>>,
         pokerhand: Category,
+        context: GameCoreContext,
     ) {
     }
 

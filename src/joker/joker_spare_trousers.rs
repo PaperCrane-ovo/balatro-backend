@@ -2,6 +2,7 @@ use godot::obj::Gd;
 
 use crate::{
     card::card::ICard,
+    core::gamecore::GameCoreContext,
     poker::{
         category::{Category, ScoringInfo},
         poker::PokerSprite,
@@ -29,7 +30,7 @@ impl ICard for SpareTrousers {
 
 impl IJoker for SpareTrousers {
     fn initialize(&mut self) {
-        self.price = 4;
+        self.price = 3;
         self.mult = Self::BASE_MULT;
         self.description = Self::DESCRIPTION_FORMAT.replace("{}", self.mult.to_string().as_str());
     }
@@ -50,6 +51,7 @@ impl IJoker for SpareTrousers {
         score: &mut ScoringInfo,
         _cards: &mut Vec<Gd<PokerSprite>>,
         _category: Category,
+        _: GameCoreContext,
     ) {
         score.mult += self.mult as f64;
     }
@@ -85,7 +87,7 @@ impl SpareTrousers {
     const RARITY: JokerRarity = JokerRarity::Uncommon;
 
     const DESCRIPTION_FORMAT: &'static str =
-        "如果打出的牌中包含\n两对\n则这张小丑牌获得+2倍率\n（当前为+{}倍率）";
+        "如果打出的牌中包含两对\n则这张小丑牌获得+2倍率\n（当前为+{}倍率）";
 
     const BASE_MULT: i64 = 0;
 

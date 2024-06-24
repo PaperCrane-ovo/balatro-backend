@@ -4,7 +4,7 @@ use godot::obj::Gd;
 use crate::{
     card::card::ICard,
     poker::{
-        category::{Category, ScoringInfo},
+        category::ScoringInfo,
         poker::{PokerRank, PokerSprite},
     },
 };
@@ -28,27 +28,24 @@ impl ICard for OddTodd {
 
 impl IJoker for OddTodd {
     fn initialize(&mut self) {
-        self.price = 4;
+        self.price = 2;
     }
 
     fn on_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
-        hands: &mut Vec<Gd<PokerSprite>>,
-        _: Category,
+        poker: &mut Gd<PokerSprite>,
     ) {
-        for i in hands.iter_mut().map(|x| x.bind().poker) {
-            match i.rank {
-                PokerRank::A
-                | PokerRank::Three
-                | PokerRank::Five
-                | PokerRank::Seven
-                | PokerRank::Nine => {
-                    score_info.chips += Self::CHIPS_ADD;
-                }
-                _ => {}
-            };
-        }
+        match poker.bind().poker.rank {
+            PokerRank::A
+            | PokerRank::Three
+            | PokerRank::Five
+            | PokerRank::Seven
+            | PokerRank::Nine => {
+                score_info.chips += Self::CHIPS_ADD;
+            }
+            _ => {}
+        };
     }
 
     fn get_display_info(&self) -> Gd<super::joker::JokerDisplayInfo> {
@@ -111,27 +108,24 @@ impl ICard for EvenSteven {
 
 impl IJoker for EvenSteven {
     fn initialize(&mut self) {
-        self.price = 4;
+        self.price = 2;
     }
 
     fn on_calculate_poker_score(
         &mut self,
         score_info: &mut ScoringInfo,
-        hands: &mut Vec<Gd<PokerSprite>>,
-        _: Category,
+        poker: &mut Gd<PokerSprite>,
     ) {
-        for i in hands.iter_mut().map(|x| x.bind().poker) {
-            match i.rank {
-                PokerRank::Two
-                | PokerRank::Four
-                | PokerRank::Six
-                | PokerRank::Eight
-                | PokerRank::Ten => {
-                    score_info.mult += Self::MULT_ADD;
-                }
-                _ => {}
-            };
-        }
+        match poker.bind().poker.rank {
+            PokerRank::Two
+            | PokerRank::Four
+            | PokerRank::Six
+            | PokerRank::Eight
+            | PokerRank::Ten => {
+                score_info.mult += Self::MULT_ADD;
+            }
+            _ => {}
+        };
     }
 
     fn get_display_info(&self) -> Gd<super::joker::JokerDisplayInfo> {

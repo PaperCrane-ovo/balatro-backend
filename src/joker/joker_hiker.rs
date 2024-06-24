@@ -2,10 +2,7 @@ use godot::obj::Gd;
 
 use crate::{
     card::card::ICard,
-    poker::{
-        category::{Category, ScoringInfo},
-        poker::PokerSprite,
-    },
+    poker::{category::ScoringInfo, poker::PokerSprite},
 };
 
 use super::joker::{IJoker, IJokerCard, IJokerSpritePath, JokerDisplayInfo, JokerRarity};
@@ -27,18 +24,11 @@ impl ICard for Hiker {
 
 impl IJoker for Hiker {
     fn initialize(&mut self) {
-        self.price = 4;
+        self.price = 3;
     }
 
-    fn on_calculate_poker_score(
-        &mut self,
-        _: &mut ScoringInfo,
-        hands: &mut Vec<Gd<PokerSprite>>,
-        _: Category,
-    ) {
-        hands
-            .iter_mut()
-            .for_each(|x| x.bind_mut().poker.extra_chip += Self::POKER_CHIPS_ADD);
+    fn on_calculate_poker_score(&mut self, _: &mut ScoringInfo, poker: &mut Gd<PokerSprite>) {
+        poker.bind_mut().poker.extra_chip += Self::POKER_CHIPS_ADD;
     }
 
     fn get_display_info(&self) -> Gd<super::joker::JokerDisplayInfo> {
