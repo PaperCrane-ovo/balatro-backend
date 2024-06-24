@@ -156,7 +156,7 @@ impl TheOrder {
     #[allow(dead_code)]
     const NAME_EN: &'static str = "The Order";
 
-    const RARITY: JokerRarity = JokerRarity::Uncommon;
+    const RARITY: JokerRarity = JokerRarity::Rare;
 
     const DESCRIPTION: &'static str = "如果打出的牌中包含顺子\n×3倍率";
 

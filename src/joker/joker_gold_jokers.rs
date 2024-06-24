@@ -161,7 +161,7 @@ impl Bootstraps {
 
     const RARITY: JokerRarity = JokerRarity::Uncommon;
 
-    const DESCRIPTION_FORMAT: &'static str = "每拥有$5，+2筹码\n（当前为+{}倍率）";
+    const DESCRIPTION_FORMAT: &'static str = "每拥有$5，+2倍率\n（当前为+{}倍率）";
 
     const MULT_PER_FIVE_GOLD: f64 = 2_f64;
 

@@ -83,10 +83,10 @@ impl Yorick {
     #[allow(dead_code)]
     const NAME_EN: &'static str = "Yorick";
 
-    const RARITY: JokerRarity = JokerRarity::Rare;
+    const RARITY: JokerRarity = JokerRarity::Legendary;
 
     const DESCRIPTION_FORMAT: &'static str =
-        "每弃掉23[{0}]张牌\n这张小丑获得×1倍率\n（当前为×{1}倍率）";
+        "每弃掉23[{0}]张牌\n这张小丑获得×1倍率\n（当前为[color=red]×{1}[/color]倍率）";
 
     const MULTER_BASE: f64 = 1_f64;
     const MULTER_ADD: f64 = 1_f64;
